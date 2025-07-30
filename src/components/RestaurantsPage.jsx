@@ -1,0 +1,224 @@
+import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Card, CardContent } from './ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus } from 'lucide-react';
+import { restaurants, getUniqueCounties, getUniqueCuisines } from '../data/restaurants';
+import '../App.css';
+
+export default function RestaurantsPage() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCounty, setSelectedCounty] = useState('All Counties');
+  const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
+
+  const counties = getUniqueCounties();
+  const cuisines = getUniqueCuisines();
+
+  const filteredRestaurants = useMemo(() => {
+    return restaurants.filter(restaurant => {
+      const matchesSearch = searchTerm === '' || 
+        restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesCounty = selectedCounty === 'All Counties' || restaurant.county === selectedCounty;
+      const matchesCuisine = selectedCuisine === 'All Cuisines' || restaurant.cuisine === selectedCuisine;
+      
+      return matchesSearch && matchesCounty && matchesCuisine;
+    });
+  }, [searchTerm, selectedCounty, selectedCuisine]);
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedCounty('All Counties');
+    setSelectedCuisine('All Cuisines');
+  };
+
+  const groupedRestaurants = useMemo(() => {
+    const grouped = {};
+    filteredRestaurants.forEach(restaurant => {
+      if (!grouped[restaurant.county]) {
+        grouped[restaurant.county] = [];
+      }
+      grouped[restaurant.county].push(restaurant);
+    });
+    return grouped;
+  }, [filteredRestaurants]);
+
+  const getPriceSymbol = (priceRange) => {
+    const symbols = { '$': '$', '$$': '$$', '$$$': '$$$', '$$$$': '$$$$' };
+    return symbols[priceRange] || '$$';
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">Restaurants in East Tennessee</h1>
+            <Link to="/submit">
+              <Button className="tennsational-orange">
+                <Plus className="w-4 h-4 mr-2" />
+                Submit a Restaurant
+              </Button>
+            </Link>
+          </div>
+          
+          {/* Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <Input
+              type="text"
+              placeholder="Search restaurants..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="md:col-span-1"
+            />
+            
+            <Select value={selectedCounty} onValueChange={setSelectedCounty}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Counties" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All Counties">All Counties</SelectItem>
+                {counties.map(county => (
+                  <SelectItem key={county} value={county}>{county}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select value={selectedCuisine} onValueChange={setSelectedCuisine}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Cuisines" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All Cuisines">All Cuisines</SelectItem>
+                {cuisines.map(cuisine => (
+                  <SelectItem key={cuisine} value={cuisine}>{cuisine}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Button 
+              variant="outline" 
+              onClick={clearFilters}
+              className="border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              Clear Filters
+            </Button>
+          </div>
+          
+          <p className="text-gray-600 mb-8">Showing {filteredRestaurants.length} restaurants</p>
+        </div>
+      </div>
+
+      {/* Restaurant Listings */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {Object.entries(groupedRestaurants).map(([county, countyRestaurants]) => (
+          <div key={county} className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {county} ({countyRestaurants.length} restaurants)
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {countyRestaurants.map((restaurant, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-xl font-semibold text-gray-900">{restaurant.name}</h3>
+                      <div className="flex items-center">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="ml-1 text-sm font-medium">{restaurant.rating}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center text-gray-600">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        <span className="text-sm">{restaurant.address}</span>
+                      </div>
+                      
+                      {restaurant.phone && (
+                        <div className="flex items-center text-gray-600">
+                          <Phone className="w-4 h-4 mr-2" />
+                          <span className="text-sm">{restaurant.phone}</span>
+                        </div>
+                      )}
+                      
+                      {restaurant.website && (
+                        <div className="flex items-center text-gray-600">
+                          <Globe className="w-4 h-4 mr-2" />
+                          <a 
+                            href={restaurant.website.startsWith('http') ? restaurant.website : `https://${restaurant.website}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline"
+                          >
+                            {restaurant.website}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                        {restaurant.cuisine}
+                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-600">{restaurant.reviews} reviews</span>
+                        <span className="text-sm font-medium text-primary">
+                          {getPriceSymbol(restaurant.priceRange)}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {restaurant.description && (
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                        {restaurant.description}
+                      </p>
+                    )}
+                    
+                    {restaurant.amenities && restaurant.amenities.length > 0 && (
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-1">
+                          {restaurant.amenities.slice(0, 3).map((amenity, idx) => (
+                            <span key={idx} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                              {amenity}
+                            </span>
+                          ))}
+                          {restaurant.amenities.length > 3 && (
+                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                              +{restaurant.amenities.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <Button className="w-full tennsational-orange">
+                      View Details
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
+        
+        {filteredRestaurants.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No restaurants found matching your criteria.</p>
+            <Button 
+              onClick={clearFilters}
+              className="mt-4 tennsational-orange"
+            >
+              Clear Filters
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
