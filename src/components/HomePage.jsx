@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
@@ -9,6 +10,22 @@ import '../App.css';
 
 export default function HomePage() {
   const stats = getRestaurantStats();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/restaurants?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/restaurants');
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -37,8 +54,14 @@ export default function HomePage() {
                       type="text"
                       placeholder="Search restaurants, cuisine, location..."
                       className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyPress={handleKeyPress}
                     />
-                    <Button className="w-full bg-primary hover:bg-primary/90">
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/90"
+                      onClick={handleSearch}
+                    >
                       <MapPin className="w-4 h-4 mr-2" />
                       Explore Restaurants
                     </Button>
@@ -104,20 +127,28 @@ export default function HomePage() {
             Get weekly featured restaurants, new reviews, and exclusive dining deals delivered to your inbox.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <div className="max-w-md mx-auto space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Input
+                type="text"
+                placeholder="First Name"
+                className="flex-1"
+              />
+              <Input
+                type="text"
+                placeholder="Last Name"
+                className="flex-1"
+              />
+            </div>
             <Input
               type="email"
-              placeholder="First Name"
-              className="flex-1"
+              placeholder="Email Address"
+              className="w-full"
             />
-            <Input
-              type="email"
-              placeholder="Last Name"
-              className="flex-1"
-            />
-          </div>
-          <div className="mt-4 max-w-md mx-auto">
-            <Button className="w-full tennsational-orange">
+            <Button 
+              className="w-full tennsational-orange"
+              onClick={() => alert('Newsletter signup coming soon! We\'re working on setting up our email system to bring you the best restaurant updates.')}
+            >
               Subscribe to Newsletter
             </Button>
           </div>
@@ -148,7 +179,11 @@ export default function HomePage() {
             Share your dining experiences and help others discover amazing restaurants across Tennessee. 
             Your reviews make a difference!
           </p>
-          <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
+          <Button 
+            size="lg" 
+            className="bg-white text-primary hover:bg-gray-100"
+            onClick={() => alert('Review feature coming soon! We\'re working on building a comprehensive review system where you can share your dining experiences.')}
+          >
             <Users className="w-5 h-5 mr-2" />
             Write Your First Review
           </Button>

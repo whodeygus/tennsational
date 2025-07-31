@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
@@ -9,9 +9,19 @@ import { restaurants, getUniqueCounties, getUniqueCuisines } from '../data/resta
 import '../App.css';
 
 export default function RestaurantsPage() {
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCounty, setSelectedCounty] = useState('All Counties');
   const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
+
+  // Handle URL search parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    }
+  }, [location.search]);
 
   const counties = getUniqueCounties();
   const cuisines = getUniqueCuisines();
@@ -195,10 +205,6 @@ export default function RestaurantsPage() {
                         </div>
                       </div>
                     )}
-                    
-                    <Button className="w-full tennsational-orange">
-                      View Details
-                    </Button>
                   </CardContent>
                 </Card>
               ))}
