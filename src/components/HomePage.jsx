@@ -6,12 +6,14 @@ import { Card, CardContent } from './ui/card';
 import { Star, MapPin, Users, Award } from 'lucide-react';
 import logoHero from '../assets/tennsational_logo_hero.png';
 import { getRestaurantStats } from '../data/restaurants';
+import { ReviewModal } from './ReviewModal';
 import '../App.css';
 
 export default function HomePage() {
   const stats = getRestaurantStats();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -182,13 +184,19 @@ export default function HomePage() {
           <Button 
             size="lg" 
             className="bg-white text-primary hover:bg-gray-100"
-            onClick={() => alert('Review feature coming soon! We\'re working on building a comprehensive review system where you can share your dining experiences.')}
+            onClick={() => setIsReviewModalOpen(true)}
           >
             <Users className="w-5 h-5 mr-2" />
             Write Your First Review
           </Button>
         </div>
       </section>
+
+      {/* Review Modal */}
+      <ReviewModal 
+        isOpen={isReviewModalOpen} 
+        onClose={() => setIsReviewModalOpen(false)} 
+      />
     </div>
   );
 }

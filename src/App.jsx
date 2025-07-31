@@ -5,6 +5,7 @@ import RestaurantsPage from './components/RestaurantsPage';
 import AboutPage from './components/AboutPage';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import SubmitRestaurant from './components/SubmitRestaurant';
+import AdminDashboard from './components/AdminDashboard';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/submit" element={<SubmitRestaurant />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>
       </div>

@@ -4,8 +4,10 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus } from 'lucide-react';
+import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus, MessageSquare } from 'lucide-react';
 import { restaurants, getUniqueCounties, getUniqueCuisines } from '../data/restaurants';
+import { StarDisplay } from './ui/star-rating';
+import { ReviewModal } from './ReviewModal';
 import '../App.css';
 
 export default function RestaurantsPage() {
@@ -13,6 +15,8 @@ export default function RestaurantsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCounty, setSelectedCounty] = useState('All Counties');
   const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   // Handle URL search parameter
   useEffect(() => {
@@ -60,6 +64,16 @@ export default function RestaurantsPage() {
   const getPriceSymbol = (priceRange) => {
     const symbols = { '$': '$', '$$': '$$', '$$$': '$$$', '$$$$': '$$$$' };
     return symbols[priceRange] || '$$';
+  };
+
+  const handleWriteReview = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setSelectedRestaurant(null);
   };
 
   return (
@@ -137,10 +151,11 @@ export default function RestaurantsPage() {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-xl font-semibold text-gray-900">{restaurant.name}</h3>
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="ml-1 text-sm font-medium">{restaurant.rating}</span>
-                      </div>
+                      <StarDisplay 
+                        rating={restaurant.rating} 
+                        reviewCount={restaurant.reviews}
+                        size="small"
+                      />
                     </div>
                     
                     <div className="space-y-2 mb-4">
@@ -205,6 +220,16 @@ export default function RestaurantsPage() {
                         </div>
                       </div>
                     )}
+
+                    <Button 
+                      onClick={() => handleWriteReview(restaurant)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full mt-4"
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Write Review
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
@@ -224,6 +249,13 @@ export default function RestaurantsPage() {
           </div>
         )}
       </div>
+
+      {/* Review Modal */}
+      <ReviewModal 
+        isOpen={isReviewModalOpen} 
+        onClose={handleCloseReviewModal}
+        preselectedRestaurant={selectedRestaurant}
+      />
     </div>
   );
 }
