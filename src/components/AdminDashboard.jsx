@@ -12,7 +12,10 @@ import {
   MessageSquare,
   Camera,
   Trash2,
-  Eye
+  Eye,
+  Mail,
+  Download,
+  Users
 } from 'lucide-react';
 import { restaurants } from '../data/restaurants';
 
@@ -20,10 +23,12 @@ export default function AdminDashboard() {
   const [pendingReviews, setPendingReviews] = useState([]);
   const [approvedReviews, setApprovedReviews] = useState([]);
   const [rejectedReviews, setRejectedReviews] = useState([]);
+  const [newsletterSubscribers, setNewsletterSubscribers] = useState([]);
   const [activeTab, setActiveTab] = useState('pending');
 
   useEffect(() => {
     loadReviews();
+    loadNewsletterSubscribers();
   }, []);
 
   const loadReviews = () => {
@@ -32,6 +37,44 @@ export default function AdminDashboard() {
     setPendingReviews(allReviews.filter(review => review.status === 'pending'));
     setApprovedReviews(allReviews.filter(review => review.status === 'approved'));
     setRejectedReviews(allReviews.filter(review => review.status === 'rejected'));
+  };
+
+  const loadNewsletterSubscribers = () => {
+    const subscribers = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
+    setNewsletterSubscribers(subscribers);
+  };
+
+  const exportNewsletterSubscribers = () => {
+    if (newsletterSubscribers.length === 0) {
+      alert('No newsletter subscribers to export.');
+      return;
+    }
+
+    const csvContent = [
+      ['First Name', 'Last Name', 'Email', 'Signup Date'],
+      ...newsletterSubscribers.map(sub => [
+        sub.firstName,
+        sub.lastName,
+        sub.email,
+        new Date(sub.timestamp).toLocaleDateString()
+      ])
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tennsational-newsletter-subscribers-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const deleteNewsletterSubscriber = (index) => {
+    if (confirm('Are you sure you want to remove this subscriber?')) {
+      const updatedSubscribers = newsletterSubscribers.filter((_, i) => i !== index);
+      localStorage.setItem('newsletterSubscriptions', JSON.stringify(updatedSubscribers));
+      loadNewsletterSubscribers();
+    }
   };
 
   const updateReviewStatus = (reviewIndex, newStatus) => {
@@ -229,7 +272,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -265,6 +308,18 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Newsletter Subscribers</p>
+                  <p className="text-3xl font-bold text-blue-600">{newsletterSubscribers.length}</p>
+                </div>
+                <Mail className="w-8 h-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Tabs */}
@@ -274,7 +329,8 @@ export default function AdminDashboard() {
               {[
                 { id: 'pending', label: 'Pending', count: pendingReviews.length },
                 { id: 'approved', label: 'Approved', count: approvedReviews.length },
-                { id: 'rejected', label: 'Rejected', count: rejectedReviews.length }
+                { id: 'rejected', label: 'Rejected', count: rejectedReviews.length },
+                { id: 'newsletter', label: 'Newsletter', count: newsletterSubscribers.length }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -292,32 +348,125 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Reviews List */}
+        {/* Content Area */}
         <div>
-          {currentReviews.length === 0 ? (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <Eye className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No {activeTab} reviews
-                </h3>
-                <p className="text-gray-600">
-                  {activeTab === 'pending' 
-                    ? 'All caught up! No reviews waiting for approval.'
-                    : `No ${activeTab} reviews to display.`
-                  }
-                </p>
-              </CardContent>
-            </Card>
+          {activeTab === 'newsletter' ? (
+            <div>
+              {/* Newsletter Header */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Newsletter Subscribers</h2>
+                <Button 
+                  onClick={exportNewsletterSubscribers}
+                  className="flex items-center gap-2"
+                  disabled={newsletterSubscribers.length === 0}
+                >
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </Button>
+              </div>
+
+              {/* Newsletter Subscribers List */}
+              {newsletterSubscribers.length === 0 ? (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No newsletter subscribers yet
+                    </h3>
+                    <p className="text-gray-600">
+                      Newsletter signups will appear here once visitors subscribe.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Name
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Email
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Signup Date
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {newsletterSubscribers.map((subscriber, index) => (
+                            <tr key={index} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {subscriber.firstName} {subscriber.lastName}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">{subscriber.email}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-500">
+                                  {new Date(subscriber.timestamp).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => deleteNewsletterSubscriber(index)}
+                                  className="text-red-600 hover:text-red-900"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           ) : (
-            currentReviews.map((review) => (
-              <ReviewCard
-                key={review.originalIndex}
-                review={review}
-                index={review.originalIndex}
-                showActions={true}
-              />
-            ))
+            /* Reviews List */
+            currentReviews.length === 0 ? (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <Eye className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No {activeTab} reviews
+                  </h3>
+                  <p className="text-gray-600">
+                    {activeTab === 'pending' 
+                      ? 'All caught up! No reviews waiting for approval.'
+                      : `No ${activeTab} reviews to display.`
+                    }
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              currentReviews.map((review) => (
+                <ReviewCard
+                  key={review.originalIndex}
+                  review={review}
+                  index={review.originalIndex}
+                  showActions={true}
+                />
+              ))
+            )
           )}
         </div>
       </div>
