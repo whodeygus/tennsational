@@ -6,22 +6,19 @@ import { Card, CardContent } from './ui/card';
 import { Star, MapPin, Users, Award } from 'lucide-react';
 import logoHero from '../assets/tennsational_logo_hero.png';
 import { getRestaurantStats } from '../data/restaurants';
-import ReviewModal from './ReviewModal';
+import { ReviewModal } from './ReviewModal';
 import '../App.css';
 
 export default function HomePage() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const stats = getRestaurantStats();
+  cexport default function HomePage() {
+  const [searchTerm, setSearchTerm] = useState('');
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [newsletterData, setNewsletterData] = useState({
     firstName: '',
     lastName: '',
     email: ''
-  });
-  
-  const navigate = useNavigate();
-  const stats = getRestaurantStats();
-
-  const handleSearch = () => {
+  });const handleSearch = () => {
     if (searchQuery.trim()) {
       navigate(`/restaurants?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
@@ -33,40 +30,6 @@ export default function HomePage() {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  };
-
-  const handleNewsletterSubmit = () => {
-    if (!newsletterData.firstName || !newsletterData.lastName || !newsletterData.email) {
-      alert('Please fill in all fields to subscribe to our newsletter.');
-      return;
-    }
-
-    // Store newsletter subscription in localStorage
-    const existingSubscriptions = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
-    const newSubscription = {
-      ...newsletterData,
-      subscribedAt: new Date().toISOString(),
-      id: Date.now()
-    };
-    
-    existingSubscriptions.push(newSubscription);
-    localStorage.setItem('newsletterSubscriptions', JSON.stringify(existingSubscriptions));
-    
-    alert('Thank you for subscribing! You\'ll receive our weekly restaurant updates and exclusive deals.');
-    
-    // Reset form
-    setNewsletterData({
-      firstName: '',
-      lastName: '',
-      email: ''
-    });
-  };
-
-  const handleNewsletterChange = (field, value) => {
-    setNewsletterData(prev => ({
-      ...prev,
-      [field]: value
-    }));
   };
 
   return (
@@ -175,27 +138,21 @@ export default function HomePage() {
                 type="text"
                 placeholder="First Name"
                 className="flex-1"
-                value={newsletterData.firstName}
-                onChange={(e) => handleNewsletterChange('firstName', e.target.value)}
               />
               <Input
                 type="text"
                 placeholder="Last Name"
                 className="flex-1"
-                value={newsletterData.lastName}
-                onChange={(e) => handleNewsletterChange('lastName', e.target.value)}
               />
             </div>
             <Input
               type="email"
               placeholder="Email Address"
               className="w-full"
-              value={newsletterData.email}
-              onChange={(e) => handleNewsletterChange('email', e.target.value)}
             />
             <Button 
               className="w-full tennsational-orange"
-              onClick={handleNewsletterSubmit}
+              onClick={() => alert('Newsletter signup coming soon! We\'re working on setting up our email system to bring you the best restaurant updates.')}
             >
               Subscribe to Newsletter
             </Button>

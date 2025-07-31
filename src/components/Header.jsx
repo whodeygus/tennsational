@@ -1,11 +1,22 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import ReviewModal from './ReviewModal';
 import logoHeader from '../assets/tennsational_logo_header.png';
 import '../App.css';
 
 export default function Header() {
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  const handleWriteReview = () => {
+    setIsReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+  };
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,12 +62,21 @@ export default function Header() {
                 className="pl-10 w-64"
               />
             </div>
-            <Button className="tennsational-orange">
+            <Button 
+              onClick={handleWriteReview}
+              className="tennsational-orange"
+            >
               Write Review
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Review Modal */}
+      <ReviewModal 
+        isOpen={isReviewModalOpen} 
+        onClose={handleCloseReviewModal}
+      />
     </header>
   );
 }

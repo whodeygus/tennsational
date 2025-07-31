@@ -274,3 +274,5 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
   );
 }
 
+export default ReviewModal;
+
