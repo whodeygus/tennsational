@@ -4,7 +4,8 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
 import { Star, MapPin, Users, Award } from 'lucide-react';
-import logoHero from '../assets/tennsational_logo_hero.png';
+import logoHero from '../assets/tennsational_logo_new.png';
+import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import { getRestaurantStats } from '../data/restaurants';
 import ReviewModal from './ReviewModal';
 import '../App.css';
@@ -72,25 +73,33 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="hero-gradient text-white py-20">
+      <section 
+        className="relative text-white py-20 min-h-[600px] flex items-center"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${mountainBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             <div className="lg:w-1/2 mb-10 lg:mb-0 text-center">
               <img 
                 src={logoHero} 
                 alt="TENNsational - Explore. Taste. Discover." 
-                className="w-80 h-auto mb-6 mx-auto"
+                className="w-96 h-auto mb-6 mx-auto drop-shadow-2xl"
               />
-              <p className="text-xl mb-8 text-white/90">
+              <p className="text-xl mb-8 text-white drop-shadow-lg">
                 Your trusted guide to authentic local flavors and hidden gems across Tennessee. 
                 Find the perfect restaurant for every occasion in 6 counties.
               </p>
             </div>
             
             <div className="lg:w-1/2 lg:pl-12">
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+              <Card className="bg-white/20 backdrop-blur-md border-white/30 shadow-2xl">
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-bold mb-4 text-white">Find Your Perfect Restaurant</h3>
+                  <h3 className="text-2xl font-bold mb-4 text-white drop-shadow-lg">Find Your Perfect Restaurant</h3>
                   <div className="space-y-4">
                     <Input
                       type="text"

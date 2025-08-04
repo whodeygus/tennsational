@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import ReviewModal from './ReviewModal';
-import logoHeader from '../assets/tennsational_logo_header.png';
+import logoHeader from '../assets/tennsational_logo_new.png';
 import '../App.css';
 
 export default function Header() {
@@ -26,7 +26,7 @@ export default function Header() {
             <img 
               src={logoHeader} 
               alt="TENNsational - Explore. Taste. Discover." 
-              className="h-10 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
 

@@ -133,3 +133,36 @@
 .hero-gradient {
   background: linear-gradient(135deg, #1E3A8A 0%, #D2691E 100%);
 }
+
+/* Mountain background utilities */
+.mountain-hero {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.mountain-overlay {
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+}
+
+/* Enhanced text shadows for mountain backgrounds */
+.text-shadow-lg {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.text-shadow-xl {
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* Logo enhancements */
+.logo-shadow {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+/* Responsive mountain background */
+@media (max-width: 768px) {
+  .mountain-hero {
+    background-attachment: scroll;
+  }
+}

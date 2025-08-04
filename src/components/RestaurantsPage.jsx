@@ -8,6 +8,7 @@ import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus, MessageSquare } fr
 import { restaurants, getUniqueCounties, getUniqueCuisines } from '../data/restaurants';
 import { StarDisplay } from './ui/star-rating';
 import { ReviewModal } from './ReviewModal';
+import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import '../App.css';
 
 export default function RestaurantsPage() {
@@ -78,7 +79,15 @@ export default function RestaurantsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm">
+      <div 
+        className="relative bg-white shadow-sm"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(${mountainBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">Restaurants in East Tennessee</h1>
