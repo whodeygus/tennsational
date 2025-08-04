@@ -45,6 +45,12 @@ export default function Header() {
               Restaurants
             </Link>
             <Link 
+              to="/merch" 
+              className="text-gray-900 hover:text-primary transition-colors font-medium"
+            >
+              Merch
+            </Link>
+            <Link 
               to="/about" 
               className="text-gray-900 hover:text-primary transition-colors font-medium"
             >
