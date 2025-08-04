@@ -211,7 +211,10 @@ export default function HomePage() {
           </div>
           
           <p className="text-sm text-gray-500 mt-4">
-            We respect your privacy. Unsubscribe at any time.
+            We respect your privacy. Unsubscribe at any time. 
+            <Link to="/privacy" className="text-primary hover:underline ml-1">
+              Privacy Policy
+            </Link>
           </p>
         </div>
       </section>
@@ -246,6 +249,33 @@ export default function HomePage() {
           </Button>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <p className="text-gray-300">
+                © 2025 TENNsational.com. All rights reserved.
+              </p>
+            </div>
+            <div className="flex space-x-6">
+              <Link 
+                to="/privacy" 
+                className="text-gray-300 hover:text-white transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <a 
+                href="mailto:Admin@tennsational.com" 
+                className="text-gray-300 hover:text-white transition-colors"
+              >
+                Contact Us
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Review Modal */}
       <ReviewModal 

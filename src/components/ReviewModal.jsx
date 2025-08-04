@@ -133,7 +133,9 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
               disabled={!!preselectedRestaurant}
             >
               <option value="">Select a restaurant...</option>
-              {restaurants.map((restaurant) => (
+              {restaurants
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((restaurant) => (
                 <option key={restaurant.id} value={restaurant.id}>
                   {restaurant.name} - {restaurant.address}
                 </option>

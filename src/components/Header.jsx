@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import ReviewModal from './ReviewModal';
@@ -9,6 +9,7 @@ import '../App.css';
 
 export default function Header() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleWriteReview = () => {
     setIsReviewModalOpen(true);
@@ -16,6 +17,14 @@ export default function Header() {
 
   const handleCloseReviewModal = () => {
     setIsReviewModalOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
   return (
     <header className="bg-white shadow-sm border-b">
@@ -70,13 +79,79 @@ export default function Header() {
             </div>
             <Button 
               onClick={handleWriteReview}
-              className="tennsational-orange"
+              className="tennsational-orange hidden sm:block"
             >
               Write Review
             </Button>
+            
+            {/* Mobile menu button */}
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+            <Link
+              to="/"
+              onClick={closeMobileMenu}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50"
+            >
+              Home
+            </Link>
+            <Link
+              to="/restaurants"
+              onClick={closeMobileMenu}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50"
+            >
+              Restaurants
+            </Link>
+            <Link
+              to="/merch"
+              onClick={closeMobileMenu}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50"
+            >
+              Merch
+            </Link>
+            <Link
+              to="/about"
+              onClick={closeMobileMenu}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50"
+            >
+              About Us
+            </Link>
+            <Link
+              to="/privacy"
+              onClick={closeMobileMenu}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50"
+            >
+              Privacy Policy
+            </Link>
+            <div className="px-3 py-2">
+              <Button 
+                onClick={() => {
+                  handleWriteReview();
+                  closeMobileMenu();
+                }}
+                className="tennsational-orange w-full"
+              >
+                Write Review
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Review Modal */}
       <ReviewModal 
