@@ -1,0 +1,87 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the best restaurants in Knox County, Tennessee?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Knox County offers a diverse dining scene with many highly-rated restaurants. Some of the best include J.C. Holdway (James Beard award-winning chef), Emilia (upscale Italian in Market Square), Kaizen (innovative Asian fusion), Bistro by the Tracks (fine dining with local ingredients), and A Dopo Sourdough Pizza (artisanal wood-fired pizza). Downtown Knoxville's Market Square and the Old City neighborhood feature many top-rated dining options."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where can I find the best BBQ in Knox County?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Knox County is home to several outstanding BBQ restaurants. Local favorites include Sweet P's Barbecue (with locations in Downtown and South Knoxville), Dead End BBQ (award-winning ribs and brisket), Full Service BBQ (known for their pulled pork), Archer's BBQ (multiple locations with Memphis-style BBQ), and Moe's Original Bar B Que (Alabama-style with great sides). Each offers unique regional styles and signature sauces."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the most romantic restaurants in Knoxville for a date night?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For a romantic evening in Knoxville, consider these atmospheric restaurants: The Bistro at the Bijou (historic setting with intimate lighting), Emilia (upscale Italian with excellent wine list), Lonesome Dove (Western-inspired fine dining), Northshore Brasserie (French cuisine with elegant ambiance), and Echo (modern bistro with rooftop views). Many offer special date night menus and private seating options for a memorable experience."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where are the best places to eat in Downtown Knoxville?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Downtown Knoxville offers a vibrant dining scene, particularly around Market Square and the Old City. Top recommendations include Tomato Head (creative pizzas and sandwiches), Stock & Barrel (gourmet burgers and bourbon), Oliver Royale (upscale new American), Tupelo Honey (Southern comfort food), J.C. Holdway (wood-fired cuisine), Kaizen (Asian fusion), and Chivo Taqueria (modern Mexican). These restaurants showcase Knoxville's diverse culinary landscape within walking distance of downtown attractions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the best family-friendly restaurants in Knox County?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Knox County has many restaurants perfect for families with children. Popular options include Aubrey's (multiple locations with varied menu and kids' options), Calhoun's On The River (riverside dining with children's menu), Soccer Taco (casual Mexican with kid-friendly atmosphere), Hard Knox Pizza (casual pizzeria with activities for kids), and Litton's (famous burgers and desserts). Many offer children's menus, high chairs, and accommodating service for families."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where can I find restaurants with outdoor seating in Knox County?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Knox County offers many restaurants with excellent outdoor seating options. Popular choices include Calhoun's On The River (waterfront patio), Lakeside Tavern (lake views), Balter Beerworks (spacious beer garden), Schulz Bräu Brewing Company (German-style biergarten), The Plaid Apron (charming garden patio), and Maple Hall/The Maple Room (rooftop seating). During pleasant weather, Market Square restaurants also offer sidewalk dining in a lively atmosphere."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the best breakfast and brunch spots in Knox County?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Knox County has excellent breakfast and brunch options. Local favorites include OliBea (farm-to-table breakfast with Southern influence), Scrambled Jake's (creative breakfast classics), First Watch (healthy breakfast options), Pete's Coffee Shop (traditional diner breakfast), Holly's Gourmet Market (upscale brunch), and The Plaid Apron (artisanal breakfast and pastries). On weekends, many restaurants offer special brunch menus with mimosas and Bloody Marys."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the best vegetarian and vegan restaurants in Knox County?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Knox County has increasingly diverse options for vegetarian and vegan diners. Dedicated plant-based restaurants include Sanctuary Vegan Cafe (100% vegan comfort food), Tomato Head (extensive vegetarian options), Harvest (plant-forward menu with local ingredients), Good Golly Tamale (vegan tamale options), and Kopita (Mediterranean vegan cuisine). Many other restaurants across the county now offer substantial vegetarian and vegan menu sections to accommodate plant-based diets."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where can I find late-night food options in Knox County?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For late-night dining in Knox County, several establishments serve food well into the evening. Options include Barley's Taproom (pizza until late), Sunspot (kitchen open late with full menu), Preservation Pub (bar food until midnight), Cook To Be (late-night Asian cuisine), Gus's Good Times Deli (late-night sandwiches near campus), and The Half Barrel (kitchen open late with excellent whiskey selection). The Old City and Cumberland Avenue areas have the highest concentration of late-night food options."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the best restaurants near the University of Tennessee campus?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Near the University of Tennessee campus, students and visitors enjoy several quality dining options. Popular choices include Sunspot (eclectic menu with vegetarian options), Gus's Good Times Deli (casual sandwiches and late hours), Copper Cellar (upscale American classics), Soccer Taco (Mexican favorites), Fieldhouse Social (sports bar with elevated food), and Yassin's Falafel House (award-winning Mediterranean). These restaurants offer a range of price points and cuisines convenient to campus."
+      }
+    }
+  ]
+}
+

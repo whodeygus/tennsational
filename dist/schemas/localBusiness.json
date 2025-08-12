@@ -1,0 +1,150 @@
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://www.tennsational.com/#organization",
+  "name": "TENNsational",
+  "alternateName": "TENNsational Restaurant Directory",
+  "description": "Your trusted guide to authentic local flavors and hidden gems across East Tennessee. Find the perfect restaurant for every occasion in 6 counties.",
+  "url": "https://www.tennsational.com",
+  "logo": "https://www.tennsational.com/logo.png",
+  "image": "https://www.tennsational.com/tennsational-logo-nobackground-noborder.png",
+  "sameAs": [
+    "https://www.facebook.com/profile.php?id=61579002906078",
+    "https://www.instagram.com/tennsational/"
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressRegion": "TN",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 35.9606,
+    "longitude": -83.9207
+  },
+  "areaServed": {
+    "@type": "GeoCircle",
+    "geoMidpoint": {
+      "@type": "GeoCoordinates",
+      "latitude": 35.9606,
+      "longitude": -83.9207
+    },
+    "geoRadius": "100000"
+  },
+  "serviceArea": {
+    "@type": "GeoCircle",
+    "geoMidpoint": {
+      "@type": "GeoCoordinates",
+      "latitude": 35.9606,
+      "longitude": -83.9207
+    },
+    "geoRadius": "100000"
+  },
+  "priceRange": "$$-$$$",
+  "telephone": "",
+  "email": "Admin@tennsational.com",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "opens": "00:00",
+    "closes": "23:59"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://www.tennsational.com/#/restaurants?search={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  },
+  "knowsAbout": [
+    "East Tennessee restaurants",
+    "Knox County dining",
+    "Sevier County restaurants",
+    "Hamblen County food",
+    "Jefferson County restaurants",
+    "Blount County dining",
+    "Cocke County restaurants",
+    "Knoxville restaurants",
+    "Gatlinburg dining",
+    "Pigeon Forge restaurants",
+    "Morristown TN food",
+    "Smoky Mountain dining"
+  ],
+  "knowsLanguage": [
+    "en-US"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "East Tennessee Restaurant Directory",
+    "itemListElement": [
+      {
+        "@type": "OfferCatalog",
+        "name": "Knox County Restaurants",
+        "itemListElement": []
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Sevier County Restaurants",
+        "itemListElement": []
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Hamblen County Restaurants",
+        "itemListElement": []
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Jefferson County Restaurants",
+        "itemListElement": []
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Blount County Restaurants",
+        "itemListElement": []
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Cocke County Restaurants",
+        "itemListElement": []
+      }
+    ]
+  },
+  "makesOffer": {
+    "@type": "Offer",
+    "itemOffered": {
+      "@type": "Service",
+      "name": "East Tennessee Restaurant Directory",
+      "description": "Comprehensive directory of restaurants across 6 East Tennessee counties with reviews, ratings, and detailed information."
+    }
+  },
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "4.3",
+      "bestRating": "5"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "East Tennessee Diners"
+    },
+    "reviewBody": "The most comprehensive restaurant directory for East Tennessee with detailed information about local dining options across 6 counties."
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.3",
+    "reviewCount": "150",
+    "bestRating": "5",
+    "worstRating": "1"
+  }
+}
+

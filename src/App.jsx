@@ -7,12 +7,14 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import SubmitRestaurant from './components/SubmitRestaurant';
 import AdminDashboard from './components/AdminDashboard';
 import MerchPage from './components/MerchPage';
+import SchemaManager from './components/SchemaManager';
 import './App.css';
 
 function App() {
   return (
     <Router>
       <div className="App">
+        <SchemaManager />
         <Header />
         <main>
           <Routes>
