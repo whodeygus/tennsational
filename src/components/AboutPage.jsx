@@ -9,7 +9,7 @@ export default function AboutPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">About TENNsational</h1>
           <p className="text-xl text-gray-600">
-            Your trusted guide to authentic local flavors across East Tennessee
+            East Tennessee's Most Complete Restaurant Guide.
           </p>
         </div>
 
@@ -19,8 +19,7 @@ export default function AboutPage() {
               <MapPin className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-3">Local Focus</h3>
               <p className="text-gray-600">
-                We specialize in showcasing the best restaurants across 6 East Tennessee counties, 
-                from hidden gems to beloved local favorites.
+                Born in the Smokies, Build for Foodies. Discover the best local dining from Knoxville to the Smokies. Comprehensive guides, honest reviews, and insider recommendations for food lovers and visitors.
               </p>
             </CardContent>
           </Card>
@@ -30,8 +29,7 @@ export default function AboutPage() {
               <Users className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-3">Community Driven</h3>
               <p className="text-gray-600">
-                Our platform is built by locals, for locals. Every review and recommendation 
-                comes from real people in the community.
+                East Tennessee Owned & Operated. From Hole-in-the-Wall to High End: We've Got You Covered
               </p>
             </CardContent>
           </Card>
@@ -52,7 +50,7 @@ export default function AboutPage() {
               <Heart className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-3">Supporting Local</h3>
               <p className="text-gray-600">
-                By connecting diners with local restaurants, we help strengthen the 
+                Born in the Smokies, Built for Foodies. By connecting diners with local restaurants, we help strengthen the 
                 East Tennessee food scene and support local businesses.
               </p>
             </CardContent>
