@@ -19,7 +19,7 @@ export default function AboutPage() {
               <MapPin className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-xl font-semibold mb-3">Local Focus</h3>
               <p className="text-gray-600">
-                Born in the Smokies, Build for Foodies. Discover the best local dining from Knoxville to the Smokies. Comprehensive guides, honest reviews, and insider recommendations for food lovers and visitors.
+                Discover the best local dining from Knoxville to the Smokies. Comprehensive guides, honest reviews, and insider recommendations for food lovers and visitors.
               </p>
             </CardContent>
           </Card>
