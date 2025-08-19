@@ -91,7 +91,7 @@ export default function HomePage() {
                 className="w-96 h-auto mb-6 mx-auto drop-shadow-2xl"
               />
               <p className="text-xl mb-8 text-white drop-shadow-lg">
-                East Tennessee Owned & Operated. The most comprehensive local restaurant directory, connecting locals and visitors with the region's best dining experiences. From hidden gems to popular favorites, we provide trusted reviews, detailed restaurant information, and insider recommendations to help you discover your next great meal in the Volunteer State. Supporting local restaurants and food lovers across East Tennessee.
+                East Tennessee Owned & Operated. The most comprehensive local restaurant directory, connecting locals and visitors with the region's best dining experiences. From hidden gems to popular favorites, we provide trusted reviews and insider recommendations to help you discover your next great meal. Supporting local restaurants and food lovers across East Tennessee.
               </p>
             </div>
             
