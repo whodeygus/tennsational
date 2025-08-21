@@ -18,6 +18,7 @@ export default function HomePage() {
     lastName: '',
     email: ''
   });
+  const [isSubmittingNewsletter, setIsSubmittingNewsletter] = useState(false);
   
   const navigate = useNavigate();
   const stats = getRestaurantStats();
@@ -36,31 +37,47 @@ export default function HomePage() {
     }
   };
 
-  const handleNewsletterSubmit = () => {
+  const handleNewsletterSubmit = async () => {
     if (!newsletterData.firstName || !newsletterData.lastName || !newsletterData.email) {
       alert('Please fill in all fields to subscribe to our newsletter.');
       return;
     }
 
-    // Store newsletter subscription in localStorage
-    const existingSubscriptions = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
-    const newSubscription = {
-      ...newsletterData,
-      subscribedAt: new Date().toISOString(),
-      id: Date.now()
-    };
-    
-    existingSubscriptions.push(newSubscription);
-    localStorage.setItem('newsletterSubscriptions', JSON.stringify(existingSubscriptions));
-    
-    alert('Thank you for subscribing! You\'ll receive our weekly restaurant updates and exclusive deals.');
-    
-    // Reset form
-    setNewsletterData({
-      firstName: '',
-      lastName: '',
-      email: ''
-    });
+    setIsSubmittingNewsletter(true);
+
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newsletterData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Thank you for subscribing! You\'ll receive our weekly restaurant updates and exclusive deals.');
+        
+        // Reset form
+        setNewsletterData({
+          firstName: '',
+          lastName: '',
+          email: ''
+        });
+      } else {
+        if (response.status === 409) {
+          alert('This email is already subscribed to our newsletter.');
+        } else {
+          alert(result.error || 'Failed to subscribe. Please try again.');
+        }
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      alert('There was an error subscribing to the newsletter. Please try again.');
+    } finally {
+      setIsSubmittingNewsletter(false);
+    }
   };
 
   const handleNewsletterChange = (field, value) => {
@@ -185,6 +202,7 @@ export default function HomePage() {
                 className="flex-1"
                 value={newsletterData.firstName}
                 onChange={(e) => handleNewsletterChange('firstName', e.target.value)}
+                disabled={isSubmittingNewsletter}
               />
               <Input
                 type="text"
@@ -192,6 +210,7 @@ export default function HomePage() {
                 className="flex-1"
                 value={newsletterData.lastName}
                 onChange={(e) => handleNewsletterChange('lastName', e.target.value)}
+                disabled={isSubmittingNewsletter}
               />
             </div>
             <Input
@@ -200,12 +219,14 @@ export default function HomePage() {
               className="w-full"
               value={newsletterData.email}
               onChange={(e) => handleNewsletterChange('email', e.target.value)}
+              disabled={isSubmittingNewsletter}
             />
             <Button 
               className="w-full tennsational-orange"
               onClick={handleNewsletterSubmit}
+              disabled={isSubmittingNewsletter}
             >
-              Subscribe to Newsletter
+              {isSubmittingNewsletter ? 'Subscribing...' : 'Subscribe to Newsletter'}
             </Button>
           </div>
           
@@ -218,34 +239,48 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Restaurants Section */}
+      {/* Call to Action Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Restaurants</h2>
-            <p className="text-xl text-gray-600">
-              Discover the top-rated dining experiences across Tennessee, handpicked by our community of local food enthusiasts.
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Join the TENNsational Community</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Whether you're a restaurant owner looking to reach more diners or a food lover eager to discover new places, TENNsational is your gateway to East Tennessee's incredible dining scene.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-primary text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Find What Makes Tennessee TENNsational</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Share your dining experiences and help others discover amazing restaurants across Tennessee. 
-            Your reviews make a difference!
-          </p>
-          <Button 
-            size="lg" 
-            className="bg-white text-primary hover:bg-gray-100"
-            onClick={() => setIsReviewModalOpen(true)}
-          >
-            <Users className="w-5 h-5 mr-2" />
-            Write Your First Review
-          </Button>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+              <CardContent className="p-8 text-center">
+                <Award className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Restaurant Owners</h3>
+                <p className="text-gray-600 mb-6">
+                  List your restaurant for free and connect with thousands of potential customers across East Tennessee.
+                </p>
+                <Link to="/add-restaurant">
+                  <Button className="tennsational-orange w-full">
+                    Add Your Restaurant
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+              <CardContent className="p-8 text-center">
+                <Users className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Food Lovers</h3>
+                <p className="text-gray-600 mb-6">
+                  Share your dining experiences and help others discover amazing restaurants across Tennessee.
+                </p>
+                <Button 
+                  className="tennsational-orange w-full"
+                  onClick={() => setIsReviewModalOpen(true)}
+                >
+                  Write a Review
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
@@ -310,4 +345,3 @@ export default function HomePage() {
     </div>
   );
 }
-
