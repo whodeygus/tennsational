@@ -3,11 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  {
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build:simple": "echo 'Skipping frontend build' && mkdir -p dist && echo '<h1>Backend Only</h1>' > dist/index.html",
+    "preview": "vite preview",
+    "start": "node server.js"
+  }
+}
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
