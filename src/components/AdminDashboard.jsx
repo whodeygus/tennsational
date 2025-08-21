@@ -15,48 +15,191 @@ import {
   Eye,
   Mail,
   Download,
-  Users
+  Users,
+  Building,
+  MapPin,
+  Phone,
+  Globe,
+  DollarSign,
+  Utensils
 } from 'lucide-react';
-import { restaurants } from '../data/restaurants';
 
 export default function AdminDashboard() {
-  const [pendingReviews, setPendingReviews] = useState([]);
-  const [approvedReviews, setApprovedReviews] = useState([]);
-  const [rejectedReviews, setRejectedReviews] = useState([]);
-  const [newsletterSubscribers, setNewsletterSubscribers] = useState([]);
-  const [activeTab, setActiveTab] = useState('pending');
+  const [stats, setStats] = useState({});
+  const [activeTab, setActiveTab] = useState('pending-restaurants');
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
 
   useEffect(() => {
-    loadReviews();
-    loadNewsletterSubscribers();
+    checkAuthStatus();
   }, []);
 
-  const loadReviews = () => {
-    const allReviews = JSON.parse(localStorage.getItem('tennsational_reviews') || '[]');
-    
-    setPendingReviews(allReviews.filter(review => review.status === 'pending'));
-    setApprovedReviews(allReviews.filter(review => review.status === 'approved'));
-    setRejectedReviews(allReviews.filter(review => review.status === 'rejected'));
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadData();
+      loadStats();
+    }
+  }, [activeTab, isAuthenticated]);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch('/api/admin/stats');
+      if (response.ok) {
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+    }
   };
 
-  const loadNewsletterSubscribers = () => {
-    const subscribers = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
-    setNewsletterSubscribers(subscribers);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm),
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        setLoginForm({ username: '', password: '' });
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Login failed');
+      }
+    } catch (error) {
+      alert('Login failed. Please try again.');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' });
+      setIsAuthenticated(false);
+      setData([]);
+      setStats({});
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const response = await fetch('/api/admin/stats');
+      if (response.ok) {
+        const statsData = await response.json();
+        setStats(statsData);
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      let endpoint;
+      let status = 'all';
+
+      if (activeTab.includes('restaurants')) {
+        endpoint = '/api/admin/restaurant-submissions';
+        if (activeTab === 'pending-restaurants') status = 'pending';
+        else if (activeTab === 'approved-restaurants') status = 'approved';
+        else if (activeTab === 'rejected-restaurants') status = 'rejected';
+      } else if (activeTab.includes('reviews')) {
+        endpoint = '/api/admin/reviews';
+        if (activeTab === 'pending-reviews') status = 'pending';
+        else if (activeTab === 'approved-reviews') status = 'approved';
+        else if (activeTab === 'rejected-reviews') status = 'rejected';
+      } else if (activeTab === 'newsletter') {
+        endpoint = '/api/admin/newsletter-subscribers';
+      }
+
+      const url = status !== 'all' ? `${endpoint}?status=${status}` : endpoint;
+      const response = await fetch(url);
+      
+      if (response.ok) {
+        const responseData = await response.json();
+        setData(responseData);
+      } else {
+        console.error('Failed to load data');
+        setData([]);
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateStatus = async (id, newStatus, type) => {
+    try {
+      const endpoint = type === 'restaurant' 
+        ? `/api/admin/restaurant-submissions/${id}`
+        : `/api/admin/reviews/${id}`;
+      
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        loadData();
+        loadStats();
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to update status');
+      }
+    } catch (error) {
+      alert('Error updating status. Please try again.');
+    }
+  };
+
+  const deleteItem = async (id, type) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
+    try {
+      let endpoint;
+      if (type === 'restaurant') {
+        endpoint = `/api/admin/restaurant-submissions/${id}`;
+      } else if (type === 'review') {
+        endpoint = `/api/admin/reviews/${id}`;
+      } else if (type === 'subscriber') {
+        endpoint = `/api/admin/newsletter-subscribers/${id}`;
+      }
+
+      const response = await fetch(endpoint, { method: 'DELETE' });
+
+      if (response.ok) {
+        loadData();
+        loadStats();
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to delete item');
+      }
+    } catch (error) {
+      alert('Error deleting item. Please try again.');
+    }
   };
 
   const exportNewsletterSubscribers = () => {
-    if (newsletterSubscribers.length === 0) {
+    if (data.length === 0) {
       alert('No newsletter subscribers to export.');
       return;
     }
 
     const csvContent = [
       ['First Name', 'Last Name', 'Email', 'Signup Date'],
-      ...newsletterSubscribers.map(sub => [
-        sub.firstName,
-        sub.lastName,
+      ...data.map(sub => [
+        sub.first_name,
+        sub.last_name,
         sub.email,
-        new Date(sub.timestamp).toLocaleDateString()
+        new Date(sub.subscribed_at).toLocaleDateString()
       ])
     ].map(row => row.join(',')).join('\n');
 
@@ -69,37 +212,6 @@ export default function AdminDashboard() {
     window.URL.revokeObjectURL(url);
   };
 
-  const deleteNewsletterSubscriber = (index) => {
-    if (confirm('Are you sure you want to remove this subscriber?')) {
-      const updatedSubscribers = newsletterSubscribers.filter((_, i) => i !== index);
-      localStorage.setItem('newsletterSubscriptions', JSON.stringify(updatedSubscribers));
-      loadNewsletterSubscribers();
-    }
-  };
-
-  const updateReviewStatus = (reviewIndex, newStatus) => {
-    const allReviews = JSON.parse(localStorage.getItem('tennsational_reviews') || '[]');
-    allReviews[reviewIndex].status = newStatus;
-    allReviews[reviewIndex].reviewedAt = new Date().toISOString();
-    
-    localStorage.setItem('tennsational_reviews', JSON.stringify(allReviews));
-    loadReviews();
-  };
-
-  const deleteReview = (reviewIndex) => {
-    if (confirm('Are you sure you want to permanently delete this review?')) {
-      const allReviews = JSON.parse(localStorage.getItem('tennsational_reviews') || '[]');
-      allReviews.splice(reviewIndex, 1);
-      localStorage.setItem('tennsational_reviews', JSON.stringify(allReviews));
-      loadReviews();
-    }
-  };
-
-  const getRestaurantName = (restaurantId) => {
-    const restaurant = restaurants.find(r => r.id === restaurantId);
-    return restaurant ? restaurant.name : 'Unknown Restaurant';
-  };
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -110,24 +222,214 @@ export default function AdminDashboard() {
     });
   };
 
-  const ReviewCard = ({ review, index, showActions = true }) => (
+  // Login Form
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">Admin Login</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Username</label>
+                <input
+                  type="text"
+                  value={loginForm.username}
+                  onChange={(e) => setLoginForm({...loginForm, username: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Password</label>
+                <input
+                  type="password"
+                  value={loginForm.password}
+                  onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full tennsational-orange">
+                Login
+              </Button>
+            </form>
+            <p className="text-sm text-gray-500 mt-4 text-center">
+              Default login: admin / tennsational2025
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Restaurant Card Component
+  const RestaurantCard = ({ restaurant }) => (
     <Card className="mb-4">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg">{getRestaurantName(review.restaurantId)}</CardTitle>
+            <CardTitle className="text-lg">{restaurant.name}</CardTitle>
+            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+              <div className="flex items-center gap-1">
+                <MapPin className="w-4 h-4" />
+                {restaurant.address}
+              </div>
+              <div className="flex items-center gap-1">
+                <Building className="w-4 h-4" />
+                {restaurant.city}, {restaurant.county}
+              </div>
+            </div>
+          </div>
+          <Badge variant={
+            restaurant.status === 'approved' ? 'default' : 
+            restaurant.status === 'rejected' ? 'destructive' : 
+            'secondary'
+          }>
+            {restaurant.status}
+          </Badge>
+        </div>
+      </CardHeader>
+      
+      <CardContent>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <span className="text-sm font-medium text-gray-500">Cuisine</span>
+              <p className="text-sm">{restaurant.cuisine}</p>
+            </div>
+            {restaurant.price_range && (
+              <div>
+                <span className="text-sm font-medium text-gray-500">Price Range</span>
+                <p className="text-sm">{restaurant.price_range}</p>
+              </div>
+            )}
+            {restaurant.phone && (
+              <div>
+                <span className="text-sm font-medium text-gray-500">Phone</span>
+                <p className="text-sm">{restaurant.phone}</p>
+              </div>
+            )}
+            {restaurant.website && (
+              <div>
+                <span className="text-sm font-medium text-gray-500">Website</span>
+                <p className="text-sm truncate">{restaurant.website}</p>
+              </div>
+            )}
+          </div>
+
+          {restaurant.description && (
+            <div>
+              <h4 className="font-medium mb-2">Description</h4>
+              <p className="text-gray-700 bg-gray-50 p-3 rounded-lg text-sm">
+                {restaurant.description}
+              </p>
+            </div>
+          )}
+
+          {restaurant.amenities && restaurant.amenities.length > 0 && (
+            <div>
+              <h4 className="font-medium mb-2">Amenities</h4>
+              <div className="flex flex-wrap gap-1">
+                {restaurant.amenities.map((amenity, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {amenity}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {restaurant.hours && (
+            <div>
+              <h4 className="font-medium mb-2">Hours</h4>
+              <p className="text-sm text-gray-700">{restaurant.hours}</p>
+            </div>
+          )}
+
+          <div className="text-xs text-gray-500">
+            Submitted: {formatDate(restaurant.submitted_at)}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2 pt-4 border-t">
+            {restaurant.status === 'pending' && (
+              <>
+                <Button
+                  onClick={() => updateStatus(restaurant.id, 'approved', 'restaurant')}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  size="sm"
+                >
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                  Approve
+                </Button>
+                <Button
+                  onClick={() => updateStatus(restaurant.id, 'rejected', 'restaurant')}
+                  variant="destructive"
+                  className="flex-1"
+                  size="sm"
+                >
+                  <XCircle className="w-4 h-4 mr-1" />
+                  Reject
+                </Button>
+              </>
+            )}
+            
+            {restaurant.status !== 'pending' && (
+              <div className="flex gap-2">
+                {restaurant.status === 'rejected' && (
+                  <Button
+                    onClick={() => updateStatus(restaurant.id, 'approved', 'restaurant')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <CheckCircle className="w-4 h-4 mr-1" />
+                    Approve
+                  </Button>
+                )}
+                {restaurant.status === 'approved' && (
+                  <Button
+                    onClick={() => updateStatus(restaurant.id, 'rejected', 'restaurant')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <XCircle className="w-4 h-4 mr-1" />
+                    Reject
+                  </Button>
+                )}
+              </div>
+            )}
+            
+            <Button
+              onClick={() => deleteItem(restaurant.id, 'restaurant')}
+              variant="outline"
+              size="sm"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  // Review Card Component (simplified from previous version)
+  const ReviewCard = ({ review }) => (
+    <Card className="mb-4">
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-lg">Restaurant ID: {review.restaurant_id}</CardTitle>
             <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
               <div className="flex items-center gap-1">
                 <User className="w-4 h-4" />
-                {review.reviewerName}
+                {review.reviewer_name}
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                Visit: {new Date(review.visitDate).toLocaleDateString()}
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                Submitted: {formatDate(review.submittedAt)}
+                Visit: {new Date(review.visit_date).toLocaleDateString()}
               </div>
             </div>
           </div>
@@ -147,138 +449,96 @@ export default function AdminDashboard() {
       <CardContent>
         <div className="space-y-4">
           <div>
-            <h4 className="font-medium mb-2 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" />
-              Review
-            </h4>
-            <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
-              {review.reviewText}
+            <h4 className="font-medium mb-2">Review</h4>
+            <p className="text-gray-700 bg-gray-50 p-3 rounded-lg text-sm">
+              {review.review_text}
             </p>
           </div>
 
-          {review.photos && review.photos.length > 0 && (
-            <div>
-              <h4 className="font-medium mb-2 flex items-center gap-2">
-                <Camera className="w-4 h-4" />
-                Photos ({review.photos.length})
-              </h4>
-              <div className="grid grid-cols-3 gap-2">
-                {review.photos.map((photo, photoIndex) => (
-                  <div key={photoIndex} className="relative">
-                    <img
-                      src={photo.preview}
-                      alt={`Review photo ${photoIndex + 1}`}
-                      className="w-full h-20 object-cover rounded-lg"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <div className="text-xs text-gray-500">
+            Submitted: {formatDate(review.submitted_at)}
+          </div>
 
-          {showActions && review.status === 'pending' && (
-            <div className="flex gap-2 pt-4 border-t">
-              <Button
-                onClick={() => updateReviewStatus(index, 'approved')}
-                className="flex-1 bg-green-600 hover:bg-green-700"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Approve
-              </Button>
-              <Button
-                onClick={() => updateReviewStatus(index, 'rejected')}
-                variant="destructive"
-                className="flex-1"
-              >
-                <XCircle className="w-4 h-4 mr-2" />
-                Reject
-              </Button>
-              <Button
-                onClick={() => deleteReview(index)}
-                variant="outline"
-                size="sm"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
-
-          {showActions && review.status !== 'pending' && (
-            <div className="flex gap-2 pt-4 border-t">
-              <Button
-                onClick={() => deleteReview(index)}
-                variant="outline"
-                size="sm"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
-              </Button>
-              {review.status === 'rejected' && (
+          {/* Action Buttons */}
+          <div className="flex gap-2 pt-4 border-t">
+            {review.status === 'pending' && (
+              <>
                 <Button
-                  onClick={() => updateReviewStatus(index, 'approved')}
-                  variant="outline"
+                  onClick={() => updateStatus(review.id, 'approved', 'review')}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
                   size="sm"
                 >
-                  <CheckCircle className="w-4 h-4 mr-2" />
+                  <CheckCircle className="w-4 h-4 mr-1" />
                   Approve
                 </Button>
-              )}
-              {review.status === 'approved' && (
                 <Button
-                  onClick={() => updateReviewStatus(index, 'rejected')}
-                  variant="outline"
+                  onClick={() => updateStatus(review.id, 'rejected', 'review')}
+                  variant="destructive"
+                  className="flex-1"
                   size="sm"
                 >
-                  <XCircle className="w-4 h-4 mr-2" />
+                  <XCircle className="w-4 h-4 mr-1" />
                   Reject
                 </Button>
-              )}
-            </div>
-          )}
+              </>
+            )}
+            
+            <Button
+              onClick={() => deleteItem(review.id, 'review')}
+              variant="outline"
+              size="sm"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 
-  const getCurrentReviews = () => {
-    const allReviews = JSON.parse(localStorage.getItem('tennsational_reviews') || '[]');
-    
-    switch (activeTab) {
-      case 'pending':
-        return allReviews
-          .map((review, index) => ({ ...review, originalIndex: index }))
-          .filter(review => review.status === 'pending');
-      case 'approved':
-        return allReviews
-          .map((review, index) => ({ ...review, originalIndex: index }))
-          .filter(review => review.status === 'approved');
-      case 'rejected':
-        return allReviews
-          .map((review, index) => ({ ...review, originalIndex: index }))
-          .filter(review => review.status === 'rejected');
-      default:
-        return [];
-    }
-  };
-
-  const currentReviews = getCurrentReviews();
+  const tabs = [
+    { id: 'pending-restaurants', label: 'Pending Restaurants', count: stats.pendingRestaurants || 0 },
+    { id: 'approved-restaurants', label: 'Approved Restaurants', count: stats.approvedRestaurants || 0 },
+    { id: 'rejected-restaurants', label: 'Rejected Restaurants', count: stats.rejectedRestaurants || 0 },
+    { id: 'pending-reviews', label: 'Pending Reviews', count: stats.pendingReviews || 0 },
+    { id: 'approved-reviews', label: 'Approved Reviews', count: stats.approvedReviews || 0 },
+    { id: 'rejected-reviews', label: 'Rejected Reviews', count: stats.rejectedReviews || 0 },
+    { id: 'newsletter', label: 'Newsletter', count: stats.newsletterSubscribers || 0 }
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Review and manage submitted restaurant reviews</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+            <p className="text-gray-600">Manage restaurant submissions, reviews, and newsletter subscribers</p>
+          </div>
+          <Button onClick={handleLogout} variant="outline">
+            Logout
+          </Button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Pending Restaurants</p>
+                  <p className="text-3xl font-bold text-orange-600">{stats.pendingRestaurants || 0}</p>
+                </div>
+                <Building className="w-8 h-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Pending Reviews</p>
-                  <p className="text-3xl font-bold text-orange-600">{pendingReviews.length}</p>
+                  <p className="text-3xl font-bold text-orange-600">{stats.pendingReviews || 0}</p>
                 </div>
                 <Clock className="w-8 h-8 text-orange-600" />
               </div>
@@ -289,8 +549,10 @@ export default function AdminDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Approved Reviews</p>
-                  <p className="text-3xl font-bold text-green-600">{approvedReviews.length}</p>
+                  <p className="text-sm font-medium text-gray-600">Approved Items</p>
+                  <p className="text-3xl font-bold text-green-600">
+                    {(stats.approvedRestaurants || 0) + (stats.approvedReviews || 0)}
+                  </p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
@@ -301,20 +563,8 @@ export default function AdminDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Rejected Reviews</p>
-                  <p className="text-3xl font-bold text-red-600">{rejectedReviews.length}</p>
-                </div>
-                <XCircle className="w-8 h-8 text-red-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
                   <p className="text-sm font-medium text-gray-600">Newsletter Subscribers</p>
-                  <p className="text-3xl font-bold text-blue-600">{newsletterSubscribers.length}</p>
+                  <p className="text-3xl font-bold text-blue-600">{stats.newsletterSubscribers || 0}</p>
                 </div>
                 <Mail className="w-8 h-8 text-blue-600" />
               </div>
@@ -325,17 +575,12 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <div className="mb-6">
           <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              {[
-                { id: 'pending', label: 'Pending', count: pendingReviews.length },
-                { id: 'approved', label: 'Approved', count: approvedReviews.length },
-                { id: 'rejected', label: 'Rejected', count: rejectedReviews.length },
-                { id: 'newsletter', label: 'Newsletter', count: newsletterSubscribers.length }
-              ].map((tab) => (
+            <nav className="-mb-px flex space-x-8 overflow-x-auto">
+              {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'border-primary text-primary'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -352,21 +597,21 @@ export default function AdminDashboard() {
         <div>
           {activeTab === 'newsletter' ? (
             <div>
-              {/* Newsletter Header */}
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">Newsletter Subscribers</h2>
                 <Button 
                   onClick={exportNewsletterSubscribers}
                   className="flex items-center gap-2"
-                  disabled={newsletterSubscribers.length === 0}
+                  disabled={data.length === 0}
                 >
                   <Download className="w-4 h-4" />
                   Export CSV
                 </Button>
               </div>
 
-              {/* Newsletter Subscribers List */}
-              {newsletterSubscribers.length === 0 ? (
+              {loading ? (
+                <div className="text-center py-8">Loading...</div>
+              ) : data.length === 0 ? (
                 <Card>
                   <CardContent className="p-12 text-center">
                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -400,11 +645,11 @@ export default function AdminDashboard() {
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                          {newsletterSubscribers.map((subscriber, index) => (
-                            <tr key={index} className="hover:bg-gray-50">
+                          {data.map((subscriber) => (
+                            <tr key={subscriber.id} className="hover:bg-gray-50">
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm font-medium text-gray-900">
-                                  {subscriber.firstName} {subscriber.lastName}
+                                  {subscriber.first_name} {subscriber.last_name}
                                 </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
@@ -412,20 +657,14 @@ export default function AdminDashboard() {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-500">
-                                  {new Date(subscriber.timestamp).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
+                                  {formatDate(subscriber.subscribed_at)}
                                 </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => deleteNewsletterSubscriber(index)}
+                                  onClick={() => deleteItem(subscriber.id, 'subscriber')}
                                   className="text-red-600 hover:text-red-900"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -436,41 +675,3 @@ export default function AdminDashboard() {
                         </tbody>
                       </table>
                     </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          ) : (
-            /* Reviews List */
-            currentReviews.length === 0 ? (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <Eye className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No {activeTab} reviews
-                  </h3>
-                  <p className="text-gray-600">
-                    {activeTab === 'pending' 
-                      ? 'All caught up! No reviews waiting for approval.'
-                      : `No ${activeTab} reviews to display.`
-                    }
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              currentReviews.map((review) => (
-                <ReviewCard
-                  key={review.originalIndex}
-                  review={review}
-                  index={review.originalIndex}
-                  showActions={true}
-                />
-              ))
-            )
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
