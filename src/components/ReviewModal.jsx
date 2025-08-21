@@ -18,11 +18,11 @@ import { Camera, X, Calendar, User } from 'lucide-react';
 import { restaurants } from '../data/restaurants';
 
 const reviewSchema = z.object({
-  restaurantId: z.string().min(1, 'Please select a restaurant'),
-  reviewerName: z.string().min(2, 'Name must be at least 2 characters'),
+  restaurant_id: z.string().min(1, 'Please select a restaurant'),
+  reviewer_name: z.string().min(2, 'Name must be at least 2 characters'),
   rating: z.number().min(1, 'Please provide a rating').max(5),
-  reviewText: z.string().min(10, 'Review must be at least 10 characters'),
-  visitDate: z.string().min(1, 'Please provide visit date'),
+  review_text: z.string().min(10, 'Review must be at least 10 characters'),
+  visit_date: z.string().min(1, 'Please provide visit date'),
 });
 
 export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
@@ -39,7 +39,7 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
   } = useForm({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
-      restaurantId: preselectedRestaurant?.id || '',
+      restaurant_id: preselectedRestaurant?.id || '',
       rating: 0,
     },
   });
@@ -69,29 +69,45 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
+      // Prepare the review data
       const reviewData = {
-        ...data,
-        rating,
-        photos: uploadedPhotos,
-        submittedAt: new Date().toISOString(),
-        status: 'pending', // Will be reviewed by admin
+        restaurant_id: parseInt(data.restaurant_id),
+        reviewer_name: data.reviewer_name,
+        rating: rating,
+        review_text: data.review_text,
+        visit_date: data.visit_date,
+        photos: uploadedPhotos.map(photo => ({
+          id: photo.id,
+          name: photo.name,
+          preview: photo.preview
+        }))
       };
 
-      // Store in localStorage for now (will be replaced with real database)
-      const existingReviews = JSON.parse(localStorage.getItem('tennsational_reviews') || '[]');
-      existingReviews.push(reviewData);
-      localStorage.setItem('tennsational_reviews', JSON.stringify(existingReviews));
+      // Submit to backend API
+      const response = await fetch('/api/reviews/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData),
+      });
 
-      // Show success message
-      alert('Thank you for your review! It has been submitted for approval and will appear on the site once reviewed.');
-      
-      // Reset form
-      reset();
-      setRating(0);
-      setUploadedPhotos([]);
-      onClose();
+      const result = await response.json();
+
+      if (response.ok) {
+        // Show success message
+        alert('Thank you for your review! It has been submitted for approval and will appear on the site once reviewed.');
+        
+        // Reset form
+        reset();
+        setRating(0);
+        setUploadedPhotos([]);
+        onClose();
+      } else {
+        throw new Error(result.error || 'Failed to submit review');
+      }
     } catch (error) {
+      console.error('Review submission error:', error);
       alert('There was an error submitting your review. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -126,9 +142,9 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Restaurant Selection */}
           <div className="space-y-2">
-            <Label htmlFor="restaurantId">Restaurant *</Label>
+            <Label htmlFor="restaurant_id">Restaurant *</Label>
             <select
-              {...register('restaurantId')}
+              {...register('restaurant_id')}
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
               disabled={!!preselectedRestaurant}
             >
@@ -141,37 +157,37 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
                 </option>
               ))}
             </select>
-            {errors.restaurantId && (
-              <p className="text-sm text-red-600">{errors.restaurantId.message}</p>
+            {errors.restaurant_id && (
+              <p className="text-sm text-red-600">{errors.restaurant_id.message}</p>
             )}
           </div>
 
           {/* Reviewer Name */}
           <div className="space-y-2">
-            <Label htmlFor="reviewerName">Your Name *</Label>
+            <Label htmlFor="reviewer_name">Your Name *</Label>
             <Input
-              {...register('reviewerName')}
+              {...register('reviewer_name')}
               placeholder="Enter your name"
             />
-            {errors.reviewerName && (
-              <p className="text-sm text-red-600">{errors.reviewerName.message}</p>
+            {errors.reviewer_name && (
+              <p className="text-sm text-red-600">{errors.reviewer_name.message}</p>
             )}
           </div>
 
           {/* Visit Date */}
           <div className="space-y-2">
-            <Label htmlFor="visitDate">Visit Date *</Label>
+            <Label htmlFor="visit_date">Visit Date *</Label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
-                {...register('visitDate')}
+                {...register('visit_date')}
                 type="date"
                 className="pl-10"
                 max={new Date().toISOString().split('T')[0]}
               />
             </div>
-            {errors.visitDate && (
-              <p className="text-sm text-red-600">{errors.visitDate.message}</p>
+            {errors.visit_date && (
+              <p className="text-sm text-red-600">{errors.visit_date.message}</p>
             )}
           </div>
 
@@ -195,14 +211,14 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
 
           {/* Review Text */}
           <div className="space-y-2">
-            <Label htmlFor="reviewText">Your Review *</Label>
+            <Label htmlFor="review_text">Your Review *</Label>
             <Textarea
-              {...register('reviewText')}
+              {...register('review_text')}
               placeholder="Tell us about your experience... What did you order? How was the service? What made this visit special?"
               rows={4}
             />
-            {errors.reviewText && (
-              <p className="text-sm text-red-600">{errors.reviewText.message}</p>
+            {errors.review_text && (
+              <p className="text-sm text-red-600">{errors.review_text.message}</p>
             )}
           </div>
 
@@ -277,4 +293,3 @@ export function ReviewModal({ isOpen, onClose, preselectedRestaurant = null }) {
 }
 
 export default ReviewModal;
-
