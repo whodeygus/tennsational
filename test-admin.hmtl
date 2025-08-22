@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TENNsational Admin Test</title>
+</head>
+<body>
+    <h1>Admin Login Test</h1>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Username" value="admin">
+        <input type="password" id="password" placeholder="Password" value="tennsational2025">
+        <button type="submit">Login</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <h2>Restaurant Submission Test</h2>
+    <form id="restaurantForm">
+        <input type="text" id="name" placeholder="Restaurant Name" value="Test Restaurant">
+        <input type="text" id="address" placeholder="Address" value="123 Main St">
+        <input type="text" id="city" placeholder="City" value="Knoxville">
+        <input type="text" id="county" placeholder="County" value="Knox County">
+        <input type="text" id="cuisine" placeholder="Cuisine" value="American">
+        <button type="submit">Submit Restaurant</button>
+    </form>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                })
+            });
+            const result = await response.json();
+            document.getElementById('result').innerHTML = JSON.stringify(result);
+        });
+
+        document.getElementById('restaurantForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch('/api/restaurants/submit', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    county: document.getElementById('county').value,
+                    cuisine: document.getElementById('cuisine').value
+                })
+            });
+            const result = await response.json();
+            alert(JSON.stringify(result));
+        });
+    </script>
+</body>
+</html>
