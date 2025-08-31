@@ -112,4 +112,4 @@ This version resolves:
 - ✅ Mobile responsiveness problems
 
 Your restaurant directory is now fully functional and ready for your community!
-
+Updated 8/31/2025
