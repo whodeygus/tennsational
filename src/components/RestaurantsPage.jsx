@@ -5,7 +5,6 @@ import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus, MessageSquare } from 'lucide-react';
-import { restaurants, getUniqueCounties, getUniqueCuisines } from '../data/restaurants';
 import { StarDisplay } from './ui/star-rating';
 import { ReviewModal } from './ReviewModal';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
@@ -18,6 +17,35 @@ export default function RestaurantsPage() {
   const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  
+  // NEW: State for dynamic restaurant data
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // NEW: Fetch restaurants from database
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/restaurants/approved');
+        if (response.ok) {
+          const data = await response.json();
+          setRestaurants(data);
+        } else {
+          console.error('Failed to fetch restaurants');
+          setError('Failed to load restaurants');
+        }
+      } catch (error) {
+        console.error('Error fetching restaurants:', error);
+        setError('Error loading restaurants');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
 
   // Handle URL search parameter
   useEffect(() => {
@@ -27,6 +55,17 @@ export default function RestaurantsPage() {
       setSearchTerm(searchParam);
     }
   }, [location.search]);
+
+  // NEW: Dynamic helper functions
+  const getUniqueCounties = () => {
+    const counties = [...new Set(restaurants.map(r => r.county))];
+    return counties.sort();
+  };
+
+  const getUniqueCuisines = () => {
+    const cuisines = [...new Set(restaurants.map(r => r.cuisine))];
+    return cuisines.sort();
+  };
 
   const counties = getUniqueCounties();
   const cuisines = getUniqueCuisines();
@@ -43,7 +82,7 @@ export default function RestaurantsPage() {
       
       return matchesSearch && matchesCounty && matchesCuisine;
     });
-  }, [searchTerm, selectedCounty, selectedCuisine]);
+  }, [restaurants, searchTerm, selectedCounty, selectedCuisine]);
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -76,6 +115,31 @@ export default function RestaurantsPage() {
     setIsReviewModalOpen(false);
     setSelectedRestaurant(null);
   };
+
+  // NEW: Loading and error states
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading restaurants...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()} className="tennsational-orange">
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,14 +219,14 @@ export default function RestaurantsPage() {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {countyRestaurants.map((restaurant, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
+              {countyRestaurants.map((restaurant) => (
+                <Card key={restaurant.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-xl font-semibold text-gray-900">{restaurant.name}</h3>
                       <StarDisplay 
-                        rating={restaurant.rating} 
-                        reviewCount={restaurant.reviews}
+                        rating={restaurant.rating || 0} 
+                        reviewCount={restaurant.reviews || 0}
                         size="small"
                       />
                     </div>
@@ -200,9 +264,9 @@ export default function RestaurantsPage() {
                         {restaurant.cuisine}
                       </span>
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-600">{restaurant.reviews} reviews</span>
+                        <span className="text-sm text-gray-600">{restaurant.reviews || 0} reviews</span>
                         <span className="text-sm font-medium text-primary">
-                          {getPriceSymbol(restaurant.priceRange)}
+                          {getPriceSymbol(restaurant.price_range)}
                         </span>
                       </div>
                     </div>
@@ -268,4 +332,3 @@ export default function RestaurantsPage() {
     </div>
   );
 }
-
