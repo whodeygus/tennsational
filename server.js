@@ -190,6 +190,29 @@ app.post('/api/restaurants/submit', (req, res) => {
   });
 });
 
+// Get approved restaurants for public display
+app.get('/api/restaurants/approved', (req, res) => {
+  db.all(
+    "SELECT * FROM restaurant_submissions WHERE status = 'approved' ORDER BY name ASC",
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      // Parse amenities JSON for each restaurant
+      const restaurants = rows.map(row => ({
+        ...row,
+        amenities: row.amenities ? JSON.parse(row.amenities) : [],
+        // Add default values for fields that might be missing
+        rating: 0, // Default rating since we don't have reviews calculated yet
+        reviews: 0 // Default review count
+      }));
+      
+      res.json(restaurants);
+    }
+  );
+});
+
 // Get restaurant submissions (admin only)
 app.get('/api/admin/restaurant-submissions', requireAuth, (req, res) => {
   const status = req.query.status || 'all';
