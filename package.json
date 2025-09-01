@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "vite build"
+    "build": "mkdir -p dist && cp -r src/static/* dist/ 2>/dev/null || echo 'No static files to copy'"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -14,16 +14,7 @@
     "cors": "^2.8.5",
     "bcryptjs": "^2.4.3",
     "express-session": "^1.17.3",
-    "multer": "^1.4.5-lts.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^3.1.0",
-    "vite": "^4.1.0",
-    "@tailwindcss/vite": "^4.0.0-alpha.20",
-    "tailwindcss": "^4.0.0-alpha.20"
+    "multer": "^1.4.5-lts.1"
   },
   "engines": {
     "node": ">=18.0.0"
