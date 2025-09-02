@@ -642,6 +642,11 @@ app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
+// Serve dynamic restaurant listings page
+app.get('/restaurants', (req, res) => {
+  res.sendFile(path.join(__dirname, 'restaurants-listing.html'));
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
@@ -666,5 +671,6 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
 
 
