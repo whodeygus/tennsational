@@ -643,7 +643,7 @@ app.get(/^(?!\/api).*/, (req, res) => {
 });
 
 // Serve dynamic restaurant listings page
-app.get('/restaurants', (req, res) => {
+app.get('/restaurant-directory', (req, res) => {
   res.sendFile(path.join(__dirname, 'restaurants-listing.html'));
 });
 
@@ -671,6 +671,7 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
 
 
 
