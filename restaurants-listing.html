@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurants in East Tennessee - TENNsational</title>
+    <meta name="description" content="Discover the best restaurants in East Tennessee! Find top-rated dining in Knoxville, Pigeon Forge, Gatlinburg, and Sevierville.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            line-height: 1.5;
+        }
+        
+        .header {
+            background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><path fill="%23d1d5db" d="M0,100 C300,200 600,0 900,100 C1050,150 1200,50 1200,100 L1200,400 L0,400 Z"/></svg>');
+            background-size: cover;
+            background-position: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d97706;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        
+        .page-title {
+            text-align: center;
+        }
+        
+        .page-title h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .submit-btn {
+            background: #d97706;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .submit-btn:hover {
+            background: #b45309;
+        }
+        
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        @media (max-width: 768px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            .page-title h1 {
+                font-size: 2rem;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .filter-input, .filter-select {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+        
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+        }
+        
+        .clear-btn {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .clear-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .results-info {
+            margin-bottom: 2rem;
+            color: #6b7280;
+        }
+        
+        .county-section {
+            margin-bottom: 3rem;
+        }
+        
+        .county-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #d97706;
+        }
+        
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .restaurant-card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .restaurant-card:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        
+        .restaurant-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: #f59e0b;
+            font-size: 0.875rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .info-icon {
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .cuisine-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .cuisine-tag {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .price-range {
+            color: #d97706;
+            font-weight: 600;
+        }
+        
+        .description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .amenity-tag {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .review-btn {
+            flex: 1;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .review-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6b7280;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.25rem;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">TENNsational</div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/restaurants" class="nav-link">Restaurants</a>
+                    <a href="/about" class="nav-link">About</a>
+                </div>
+            </div>
+            <div class="page-title">
+                <h1>Restaurants in East Tennessee</h1>
+                <a href="/submit-restaurant" class="submit-btn">
+                    <span>+</span> Submit a Restaurant
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="filters">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Search restaurants...</label>
+                    <input type="text" id="search" class="filter-input" placeholder="Restaurant name, cuisine, or location">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">County</label>
+                    <select id="county-filter" class="filter-select">
+                        <option value="">All Counties</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Cuisine</label>
+                    <select id="cuisine-filter" class="filter-select">
+                        <option value="">All Cuisines</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="clear-btn" onclick="clearFilters()">Clear Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-info" class="results-info"></div>
+        <div id="content">
+            <div class="loading">Loading restaurants...</div>
+        </div>
+    </div>
+
+    <script>
+        let allRestaurants = [];
+        let filteredRestaurants = [];
+
+        async function loadRestaurants() {
+            try {
+                const response = await fetch('/api/restaurants/approved');
+                if (response.ok) {
+                    allRestaurants = await response.json();
+                    setupFilters();
+                    filterAndDisplayRestaurants();
+                } else {
+                    document.getElementById('content').innerHTML = 
+                        '<div class="error">Failed to load restaurants. Please try again later.</div>';
+                }
+            } catch (error) {
+                console.error('Error loading restaurants:', error);
+                document.getElementById('content').innerHTML = 
+                    '<div class="error">Error loading restaurants. Please check your connection.</div>';
+            }
+        }
+
+        function setupFilters() {
+            // Get unique counties and cuisines
+            const counties = [...new Set(allRestaurants.map(r => r.county))].sort();
+            const cuisines = [...new Set(allRestaurants.map(r => r.cuisine))].sort();
+
+            // Populate county filter
+            const countySelect = document.getElementById('county-filter');
+            counties.forEach(county => {
+                const option = document.createElement('option');
+                option.value = county;
+                option.textContent = county;
+                countySelect.appendChild(option);
+            });
+
+            // Populate cuisine filter
+            const cuisineSelect = document.getElementById('cuisine-filter');
+            cuisines.forEach(cuisine => {
+                const option = document.createElement('option');
+                option.value = cuisine;
+                option.textContent = cuisine;
+                cuisineSelect.appendChild(option);
+            });
+
+            // Add event listeners
+            document.getElementById('search').addEventListener('input', filterAndDisplayRestaurants);
+            document.getElementById('county-filter').addEventListener('change', filterAndDisplayRestaurants);
+            document.getElementById('cuisine-filter').addEventListener('change', filterAndDisplayRestaurants);
+        }
+
+        function filterAndDisplayRestaurants() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const selectedCounty = document.getElementById('county-filter').value;
+            const selectedCuisine = document.getElementById('cuisine-filter').value;
+
+            filteredRestaurants = allRestaurants.filter(restaurant => {
+                const matchesSearch = !searchTerm || 
+                    restaurant.name.toLowerCase().includes(searchTerm) ||
+                    restaurant.address.toLowerCase().includes(searchTerm) ||
+                    restaurant.cuisine.toLowerCase().includes(searchTerm) ||
+                    (restaurant.description && restaurant.description.toLowerCase().includes(searchTerm));
+                
+                const matchesCounty = !selectedCounty || restaurant.county === selectedCounty;
+                const matchesCuisine = !selectedCuisine || restaurant.cuisine === selectedCuisine;
+                
+                return matchesSearch && matchesCounty && matchesCuisine;
+            });
+
+            displayRestaurants();
+        }
+
+        function displayRestaurants() {
+            const content = document.getElementById('content');
+            const resultsInfo = document.getElementById('results-info');
+
+            resultsInfo.textContent = `Showing ${filteredRestaurants.length} restaurants`;
+
+            if (filteredRestaurants.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No restaurants found</h3>
+                        <p>Try adjusting your search criteria or <a href="/submit-restaurant">submit a new restaurant</a>.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group restaurants by county
+            const groupedRestaurants = {};
+            filteredRestaurants.forEach(restaurant => {
+                if (!groupedRestaurants[restaurant.county]) {
+                    groupedRestaurants[restaurant.county] = [];
+                }
+                groupedRestaurants[restaurant.county].push(restaurant);
+            });
+
+            // Generate HTML
+            const html = Object.entries(groupedRestaurants)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([county, restaurants]) => `
+                    <div class="county-section">
+                        <h2 class="county-header">${county} (${restaurants.length} restaurants)</h2>
+                        <div class="restaurant-grid">
+                            ${restaurants.map(restaurant => createRestaurantCard(restaurant)).join('')}
+                        </div>
+                    </div>
+                `).join('');
+
+            content.innerHTML = html;
+        }
+
+        function createRestaurantCard(restaurant) {
+            const amenities = restaurant.amenities || [];
+            const maxAmenities = 3;
+            
+            return `
+                <div class="restaurant-card">
+                    <div class="card-header">
+                        <h3 class="restaurant-name">${restaurant.name}</h3>
+                        <div class="rating">
+                            ${'★'.repeat(Math.floor(restaurant.rating || 0))}${'☆'.repeat(5 - Math.floor(restaurant.rating || 0))}
+                            <span>(${restaurant.reviews || 0})</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            ${restaurant.address}, ${restaurant.city}
+                        </div>
+                        
+                        ${restaurant.phone ? `
+                            <div class="info-item">
+                                <svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                ${restaurant.phone}
+                            </div>
+                        ` : ''}
+                        
+                        ${restaurant.website ? `
+                            <div class="info-item">
+                                <svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9m0 9c-5 0-9-4-9-9s4-9 9-9" />
+                                </svg>
+                                <a href="${restaurant.website.startsWith('http') ? restaurant.website : 'https://' + restaurant.website}" target="_blank" style="color: #d97706;">${restaurant.website}</a>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="cuisine-price">
+                        <span class="cuisine-tag">${restaurant.cuisine}</span>
+                        ${restaurant.price_range ? `<span class="price-range">${restaurant.price_range}</span>` : ''}
+                    </div>
+                    
+                    ${restaurant.description ? `
+                        <div class="description">${restaurant.description}</div>
+                    ` : ''}
+                    
+                    ${amenities.length > 0 ? `
+                        <div class="amenities">
+                            ${amenities.slice(0, maxAmenities).map(amenity => `<span class="amenity-tag">${amenity}</span>`).join('')}
+                            ${amenities.length > maxAmenities ? `<span class="amenity-tag">+${amenities.length - maxAmenities} more</span>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    ${restaurant.hours ? `
+                        <div class="info-item" style="margin-bottom: 1rem; font-size: 0.875rem;">
+                            <svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            ${restaurant.hours}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="card-actions">
+                        <a href="#" class="review-btn" onclick="writeReview('${restaurant.name}')">
+                            <svg style="width: 1rem; height: 1rem; display: inline; margin-right: 0.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            Write Review
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function clearFilters() {
+            document.getElementById('search').value = '';
+            document.getElementById('county-filter').value = '';
+            document.getElementById('cuisine-filter').value = '';
+            filterAndDisplayRestaurants();
+        }
+
+        function writeReview(restaurantName) {
+            // This would integrate with your review system
+            alert(`Review functionality coming soon for ${restaurantName}!`);
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', loadRestaurants);
+    </script>
+</body>
+</html>
