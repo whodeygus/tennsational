@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "mkdir -p dist && cp -r src/static/* dist/ 2>/dev/null || echo 'No static files to copy'"
+    "build": "vite build"
   },
   "dependencies": {
     "express": "^4.18.2",
