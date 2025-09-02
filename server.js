@@ -521,6 +521,11 @@ app.get('/api/admin/stats', requireAuth, (req, res) => {
   });
 });
 
+// Serve restaurant admin page
+app.get('/admin/restaurants', (req, res) => {
+  res.sendFile(path.join(__dirname, 'restaurant-admin.html'));
+});
+
 // Serve the React app for all non-API routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
