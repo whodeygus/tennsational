@@ -369,22 +369,19 @@
 
         async function loadStats() {
             try {
-                // Try to get stats - if it fails, just show zeros
-                const response = await fetch('/api/admin/stats');
+                const response = await fetch('/api/public/stats');
                 if (response.ok) {
                     stats = await response.json();
                     document.getElementById('pendingCount').textContent = stats.pendingRestaurants || 0;
                     document.getElementById('approvedCount').textContent = stats.approvedRestaurants || 0;
                     document.getElementById('rejectedCount').textContent = stats.rejectedRestaurants || 0;
                 } else {
-                    // If stats fail, show zeros but continue working
                     document.getElementById('pendingCount').textContent = '0';
                     document.getElementById('approvedCount').textContent = '0';
                     document.getElementById('rejectedCount').textContent = '0';
                 }
             } catch (error) {
                 console.error('Error loading stats:', error);
-                // Show zeros if stats fail
                 document.getElementById('pendingCount').textContent = '0';
                 document.getElementById('approvedCount').textContent = '0';
                 document.getElementById('rejectedCount').textContent = '0';
@@ -394,17 +391,13 @@
         async function loadRestaurants(status = 'all') {
             try {
                 const url = status === 'all' 
-                    ? '/api/admin/restaurant-submissions'
-                    : `/api/admin/restaurant-submissions?status=${status}`;
+                    ? '/api/public/restaurant-submissions'
+                    : `/api/public/restaurant-submissions?status=${status}`;
                 
                 const response = await fetch(url);
                 if (response.ok) {
                     restaurants = await response.json();
                     displayRestaurants();
-                } else if (response.status === 401) {
-                    // Show error but don't redirect - let user know they need to login
-                    document.getElementById('content').innerHTML = 
-                        '<div class="error">Authentication required. Please log in to your main admin panel first, then return here.</div>';
                 } else {
                     document.getElementById('content').innerHTML = 
                         '<div class="error">Failed to load restaurant submissions</div>';
@@ -545,7 +538,7 @@
 
         async function updateStatus(id, newStatus) {
             try {
-                const response = await fetch(`/api/admin/restaurant-submissions/${id}`, {
+                const response = await fetch(`/api/public/restaurant-submissions/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -576,7 +569,7 @@
             }
 
             try {
-                const response = await fetch(`/api/admin/restaurant-submissions/${id}`, {
+                const response = await fetch(`/api/public/restaurant-submissions/${id}`, {
                     method: 'DELETE'
                 });
 
