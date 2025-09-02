@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Restaurant - TENNsational</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            line-height: 1.5;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d97706;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        
+        .main-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .main-title h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .main-title p {
+            font-size: 1.125rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .form-row.two-col {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row.two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #dc2626;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .price-range-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .radio-option:hover {
+            border-color: #d97706;
+            background-color: #fef3c7;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        
+        .radio-option input[type="radio"]:checked + .radio-label {
+            font-weight: 600;
+            color: #d97706;
+        }
+        
+        .amenities-section {
+            margin-top: 1rem;
+        }
+        
+        .amenity-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .amenity-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .amenity-tag {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 0.5rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .remove-amenity {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .remove-amenity:hover {
+            color: #dc2626;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: #d97706;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #b45309;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .form-actions .btn {
+            flex: 1;
+        }
+        
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .info-box h3 {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            color: #1e40af;
+        }
+        
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .success-card {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        
+        .success-icon {
+            width: 4rem;
+            height: 4rem;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .success-icon svg {
+            width: 2rem;
+            height: 2rem;
+            color: #16a34a;
+        }
+        
+        .success-card h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .success-card p {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+        
+        .field-error {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">TENNsational</div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/restaurants" class="nav-link">Restaurants</a>
+                    <a href="/about" class="nav-link">About</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-title">
+            <h1>Submit a Restaurant</h1>
+            <p>Help us grow our directory by adding your favorite local restaurant! All submissions are reviewed before being added to the directory.</p>
+        </div>
+
+        <div id="success-view" class="form-card" style="display: none;">
+            <div class="success-card">
+                <div class="success-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h2>Restaurant Submitted Successfully!</h2>
+                <p>Thank you for contributing to TENNsational! Your restaurant submission has been received and will be reviewed by our team. Once approved, it will appear in our directory.</p>
+                <button type="button" class="btn btn-primary" onclick="resetForm()">Submit Another Restaurant</button>
+            </div>
+        </div>
+
+        <div id="form-view" class="form-card">
+            <form id="restaurant-form">
+                <div id="error-message" class="error-message" style="display: none;"></div>
+
+                <div class="form-row two-col">
+                    <div class="form-group">
+                        <label for="name" class="form-label required">Restaurant Name</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="e.g., Tony's Italian Kitchen" required>
+                        <div class="field-error" id="name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cuisine" class="form-label required">Cuisine Type</label>
+                        <select id="cuisine" name="cuisine" class="form-select" required>
+                            <option value="">Select cuisine type...</option>
+                            <option value="American">American</option>
+                            <option value="American Steakhouse">American Steakhouse</option>
+                            <option value="Asian">Asian</option>
+                            <option value="BBQ">BBQ</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Coffee">Coffee</option>
+                            <option value="Fast Food">Fast Food</option>
+                            <option value="Indian">Indian</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Mediterranean">Mediterranean</option>
+                            <option value="Mexican">Mexican</option>
+                            <option value="Mexican Fast Food">Mexican Fast Food</option>
+                            <option value="Middle Eastern">Middle Eastern</option>
+                            <option value="Pizza">Pizza</option>
+                            <option value="Seafood">Seafood</option>
+                            <option value="Southern">Southern</option>
+                            <option value="Steakhouse">Steakhouse</option>
+                        </select>
+                        <div class="field-error" id="cuisine-error"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="form-label required">Full Address</label>
+                    <input type="text" id="address" name="address" class="form-input" placeholder="123 Main Street, Knoxville, TN 37902" required>
+                    <div class="field-error" id="address-error"></div>
+                </div>
+
+                <div class="form-row two-col">
+                    <div class="form-group">
+                        <label for="city" class="form-label required">City</label>
+                        <input type="text" id="city" name="city" class="form-input" placeholder="e.g., Knoxville" required>
+                        <div class="field-error" id="city-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="county" class="form-label required">County</label>
+                        <select id="county" name="county" class="form-select" required>
+                            <option value="">Select county...</option>
+                            <option value="Blount County">Blount County</option>
+                            <option value="Cocke County">Cocke County</option>
+                            <option value="Hamblen County">Hamblen County</option>
+                            <option value="Jefferson County">Jefferson County</option>
+                            <option value="Knox County">Knox County</option>
+                            <option value="Sevier County">Sevier County</option>
+                        </select>
+                        <div class="field-error" id="county-error"></div>
+                    </div>
+                </div>
+
+                <div class="form-row two-col">
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input" placeholder="(865) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="website" class="form-label">Website</label>
+                        <input type="url" id="website" name="website" class="form-input" placeholder="https://www.example.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Price Range</label>
+                    <div class="price-range-group">
+                        <label class="radio-option">
+                            <input type="radio" name="price_range" value="$">
+                            <span class="radio-label">$ - Under $15</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="price_range" value="$$">
+                            <span class="radio-label">$$ - $15-30</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="price_range" value="$$$">
+                            <span class="radio-label">$$$ - $30-50</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="price_range" value="$$$$">
+                            <span class="radio-label">$$$$ - Over $50</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="hours" class="form-label">Hours of Operation</label>
+                    <textarea id="hours" name="hours" class="form-textarea" placeholder="Mon-Thu: 11:00 AM - 9:00 PM, Fri-Sat: 11:00 AM - 10:00 PM, Sun: 12:00 PM - 8:00 PM" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label required">Restaurant Description</label>
+                    <textarea id="description" name="description" class="form-textarea" placeholder="Tell us about your restaurant! What makes it special? What's your signature dish? What's the atmosphere like?" rows="4" required></textarea>
+                    <div class="field-error" id="description-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Amenities & Features</label>
+                    <div class="amenity-input-group">
+                        <input type="text" id="new-amenity" class="form-input" placeholder="e.g., Outdoor Seating, Full Bar, Live Music">
+                        <button type="button" class="btn btn-secondary" onclick="addAmenity()">Add</button>
+                    </div>
+                    <div id="amenity-tags" class="amenity-tags"></div>
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">
+                        Add features like "Outdoor Seating", "Full Bar", "Live Music", "Family Friendly", etc.
+                    </p>
+                </div>
+
+                <div class="info-box">
+                    <h3>Submission Process</h3>
+                    <ul>
+                        <li>• Your restaurant will be reviewed by our team before being added to the directory</li>
+                        <li>• We may contact you if we need additional information</li>
+                        <li>• Once approved, your restaurant will appear in search results and listings</li>
+                        <li>• This service is completely free for restaurant owners</li>
+                    </ul>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">Submit Restaurant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let amenities = [];
+
+        function addAmenity() {
+            const input = document.getElementById('new-amenity');
+            const value = input.value.trim();
+            
+            if (value && !amenities.includes(value)) {
+                amenities.push(value);
+                input.value = '';
+                renderAmenities();
+            }
+        }
+
+        function removeAmenity(amenity) {
+            amenities = amenities.filter(a => a !== amenity);
+            renderAmenities();
+        }
+
+        function renderAmenities() {
+            const container = document.getElementById('amenity-tags');
+            container.innerHTML = amenities.map(amenity => `
+                <div class="amenity-tag">
+                    ${amenity}
+                    <button type="button" class="remove-amenity" onclick="removeAmenity('${amenity}')">×</button>
+                </div>
+            `).join('');
+        }
+
+        function clearForm() {
+            document.getElementById('restaurant-form').reset();
+            amenities = [];
+            renderAmenities();
+            clearErrors();
+        }
+
+        function resetForm() {
+            clearForm();
+            document.getElementById('success-view').style.display = 'none';
+            document.getElementById('form-view').style.display = 'block';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+
+        function showFieldError(field, message) {
+            const errorDiv = document.getElementById(field + '-error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+            }
+        }
+
+        function clearErrors() {
+            hideError();
+            const errorFields = ['name', 'cuisine', 'address', 'city', 'county', 'description'];
+            errorFields.forEach(field => {
+                const errorDiv = document.getElementById(field + '-error');
+                if (errorDiv) errorDiv.textContent = '';
+            });
+        }
+
+        // Add Enter key support for amenities
+        document.getElementById('new-amenity').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addAmenity();
+            }
+        });
+
+        // Form submission
+        document.getElementById('restaurant-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            clearErrors();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                const formData = new FormData(e.target);
+                const data = {
+                    name: formData.get('name'),
+                    address: formData.get('address'),
+                    city: formData.get('city'),
+                    county: formData.get('county'),
+                    phone: formData.get('phone'),
+                    website: formData.get('website'),
+                    cuisine: formData.get('cuisine'),
+                    price_range: formData.get('price_range'),
+                    description: formData.get('description'),
+                    hours: formData.get('hours'),
+                    amenities: amenities,
+                    submitted_at: new Date().toISOString()
+                };
+
+                console.log('Submitting restaurant:', data);
+
+                const response = await fetch('/api/restaurants/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                console.log('Server response:', result);
+
+                if (response.ok) {
+                    document.getElementById('form-view').style.display = 'none';
+                    document.getElementById('success-view').style.display = 'block';
+                    clearForm();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    if (result.error) {
+                        showError(result.error);
+                    } else {
+                        showError('Failed to submit restaurant. Please try again.');
+                    }
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showError('There was an error submitting your restaurant. Please check your connection and try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>
