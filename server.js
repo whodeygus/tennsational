@@ -632,8 +632,8 @@ app.get('/admin/restaurants', (req, res) => {
   res.sendFile(path.join(__dirname, 'restaurant-admin.html'));
 });
 
-// Serve the React app for all non-API routes
-app.get('*', (req, res) => {
+// Serve the React app for all non-API routes (but not API routes)
+app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
@@ -661,3 +661,4 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
