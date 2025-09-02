@@ -191,6 +191,113 @@ app.post('/api/restaurants/submit', (req, res) => {
 });
 
 // Get approved restaurants for public display
+// ============= NO-AUTH RESTAURANT MANAGEMENT ENDPOINTS =============
+// These endpoints work without authentication for easier restaurant management
+
+// Get restaurant submissions (no auth required)
+app.get('/api/public/restaurant-submissions', (req, res) => {
+  const status = req.query.status || 'all';
+  
+  let query = "SELECT * FROM restaurant_submissions";
+  let params = [];
+  
+  if (status !== 'all') {
+    query += " WHERE status = ?";
+    params.push(status);
+  }
+  
+  query += " ORDER BY submitted_at DESC";
+  
+  db.all(query, params, (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    
+    // Parse amenities JSON
+    const submissions = rows.map(row => ({
+      ...row,
+      amenities: row.amenities ? JSON.parse(row.amenities) : []
+    }));
+    
+    res.json(submissions);
+  });
+});
+
+// Update restaurant submission status (no auth required)
+app.put('/api/public/restaurant-submissions/:id', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  db.run(
+    "UPDATE restaurant_submissions SET status = ? WHERE id = ?",
+    [status, id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      if (this.changes === 0) {
+        return res.status(404).json({ error: 'Submission not found' });
+      }
+      
+      res.json({ success: true, message: 'Status updated successfully' });
+    }
+  );
+});
+
+// Delete restaurant submission (no auth required)
+app.delete('/api/public/restaurant-submissions/:id', (req, res) => {
+  const { id } = req.params;
+  
+  db.run(
+    "DELETE FROM restaurant_submissions WHERE id = ?",
+    [id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      if (this.changes === 0) {
+        return res.status(404).json({ error: 'Submission not found' });
+      }
+      
+      res.json({ success: true, message: 'Submission deleted successfully' });
+    }
+  );
+});
+
+// Dashboard Stats (no auth required)
+app.get('/api/public/stats', (req, res) => {
+  const stats = {};
+  
+  // Get counts for each table
+  const queries = [
+    { name: 'pendingRestaurants', query: "SELECT COUNT(*) as count FROM restaurant_submissions WHERE status = 'pending'" },
+    { name: 'approvedRestaurants', query: "SELECT COUNT(*) as count FROM restaurant_submissions WHERE status = 'approved'" },
+    { name: 'rejectedRestaurants', query: "SELECT COUNT(*) as count FROM restaurant_submissions WHERE status = 'rejected'" },
+    { name: 'pendingReviews', query: "SELECT COUNT(*) as count FROM reviews WHERE status = 'pending'" },
+    { name: 'approvedReviews', query: "SELECT COUNT(*) as count FROM reviews WHERE status = 'approved'" },
+    { name: 'rejectedReviews', query: "SELECT COUNT(*) as count FROM reviews WHERE status = 'rejected'" },
+    { name: 'newsletterSubscribers', query: "SELECT COUNT(*) as count FROM newsletter_subscribers" }
+  ];
+  
+  let completed = 0;
+  
+  queries.forEach(({ name, query }) => {
+    db.get(query, (err, row) => {
+      if (!err && row) {
+        stats[name] = row.count;
+      } else {
+        stats[name] = 0;
+      }
+      
+      completed++;
+      if (completed === queries.length) {
+        res.json(stats);
+      }
+    });
+  });
+});
 app.get('/api/restaurants/approved', (req, res) => {
   db.all(
     "SELECT * FROM restaurant_submissions WHERE status = 'approved' ORDER BY name ASC",
@@ -555,3 +662,4 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
