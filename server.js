@@ -637,8 +637,21 @@ app.get('/submit-restaurant', (req, res) => {
   res.sendFile(path.join(__dirname, 'restaurant-submission.html'));
 });
 
-// Serve the React app for all non-API routes (but not API routes)
-app.get(/^(?!\/api).*/, (req, res) => {
+// Serve the React app for specific routes only
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+app.get('/merch', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+// Catch-all for any other React routes
+app.get(/^\/((?!api|admin|submit-restaurant|restaurant-directory).)*$/, (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
@@ -671,6 +684,7 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
+
 
 
 
