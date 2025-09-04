@@ -128,6 +128,53 @@ function requireAuth(req, res, next) {
 
 // ============= API ROUTES =============
 
+// TEMPORARY DEBUG ENDPOINT - Add this to check what's in your database
+app.get('/api/debug/all-restaurants', (req, res) => {
+  console.log('DEBUG: Checking all restaurants in database...');
+  
+  db.all("SELECT * FROM restaurant_submissions ORDER BY submitted_at DESC", (err, rows) => {
+    if (err) {
+      console.error('Debug query error:', err);
+      return res.json({ 
+        error: err.message,
+        restaurants: [],
+        count: 0 
+      });
+    }
+    
+    console.log('DEBUG: Found', rows.length, 'total restaurants');
+    if (rows.length > 0) {
+      console.log('DEBUG: First restaurant:', rows[0]);
+    }
+    
+    // Parse amenities for display
+    const restaurants = rows.map(row => ({
+      ...row,
+      amenities: row.amenities ? JSON.parse(row.amenities) : []
+    }));
+    
+    const result = {
+      success: true,
+      count: restaurants.length,
+      restaurants: restaurants,
+      approved_count: restaurants.filter(r => r.status === 'approved').length,
+      pending_count: restaurants.filter(r => r.status === 'pending').length,
+      rejected_count: restaurants.filter(r => r.status === 'rejected').length,
+      database_path: dbPath,
+      environment: process.env.NODE_ENV || 'development'
+    };
+    
+    console.log('DEBUG: Returning result:', {
+      count: result.count,
+      approved: result.approved_count,
+      pending: result.pending_count,
+      rejected: result.rejected_count
+    });
+    
+    res.json(result);
+  });
+});
+
 // Admin Authentication
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
@@ -192,12 +239,17 @@ app.post('/api/restaurants/submit', (req, res) => {
 
 // Get approved restaurants for public display
 app.get('/api/restaurants/approved', (req, res) => {
+  console.log('API: Getting approved restaurants...');
+  
   db.all(
     "SELECT * FROM restaurant_submissions WHERE status = 'approved' ORDER BY name ASC",
     (err, rows) => {
       if (err) {
+        console.error('Error getting approved restaurants:', err);
         return res.status(500).json({ error: 'Database error' });
       }
+      
+      console.log('API: Found', rows.length, 'approved restaurants');
       
       // Parse amenities JSON for each restaurant
       const restaurants = rows.map(row => ({
@@ -247,11 +299,14 @@ app.put('/api/admin/restaurant-submissions/:id', requireAuth, (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   
+  console.log(`Updating restaurant ${id} status to: ${status}`);
+  
   db.run(
     "UPDATE restaurant_submissions SET status = ? WHERE id = ?",
     [status, id],
     function(err) {
       if (err) {
+        console.error('Error updating restaurant status:', err);
         return res.status(500).json({ error: 'Database error' });
       }
       
@@ -259,6 +314,7 @@ app.put('/api/admin/restaurant-submissions/:id', requireAuth, (req, res) => {
         return res.status(404).json({ error: 'Submission not found' });
       }
       
+      console.log(`Successfully updated restaurant ${id} to ${status}`);
       res.json({ success: true, message: 'Status updated successfully' });
     }
   );
@@ -684,8 +740,3 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
-
-
-
-
-
