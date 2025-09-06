@@ -29,59 +29,48 @@ export default function RestaurantsPage() {
     const fetchAllRestaurants = async () => {
       try {
         setLoading(true);
+        console.log('Starting to fetch restaurants...');
         
         // Start with hardcoded restaurants from JSON file
         const hardcodedRestaurants = allRestaurantsData.restaurants;
+        console.log('Loaded hardcoded restaurants:', hardcodedRestaurants.length);
         
         // Fetch user-submitted approved restaurants from database
         let databaseRestaurants = [];
         try {
+          console.log('Fetching database restaurants...');
           const response = await fetch('/api/restaurants/approved');
           if (response.ok) {
             databaseRestaurants = await response.json();
+            console.log('Database restaurants loaded:', databaseRestaurants.length);
+            
+            // Mark database restaurants as "new" for display
+            databaseRestaurants = databaseRestaurants.map(restaurant => ({
+              ...restaurant,
+              isUserSubmitted: true
+            }));
           } else {
-            console.log('No approved restaurants from database yet');
+            console.warn('Failed to fetch database restaurants, using hardcoded only');
           }
         } catch (dbError) {
-          console.log('Could not fetch database restaurants:', dbError);
-          // Continue with just hardcoded restaurants if database fails
+          console.warn('Database fetch error, using hardcoded restaurants only:', dbError);
         }
-
-        // Convert database restaurants to match hardcoded format
-        const formattedDatabaseRestaurants = databaseRestaurants.map(restaurant => ({
-          id: `db-${restaurant.id}`, // Prefix with 'db-' to avoid ID conflicts
-          name: restaurant.name,
-          county: restaurant.county,
-          city: restaurant.city,
-          cuisine: restaurant.cuisine,
-          price_range: restaurant.price_range || '$$',
-          rating: restaurant.rating || 0,
-          review_count: restaurant.reviews || 0,
-          address: restaurant.address,
-          phone: restaurant.phone || '',
-          website: restaurant.website || '',
-          hours: restaurant.hours || 'Hours not specified',
-          amenities: restaurant.amenities || [],
-          featured: false, // User-submitted restaurants are not featured by default
-          description: restaurant.description || 'Great local restaurant',
-          isUserSubmitted: true // Flag to identify user-submitted restaurants
-        }));
-
-        // Combine both arrays - hardcoded first, then database restaurants
-        const combinedRestaurants = [
-          ...hardcodedRestaurants.map(r => ({ ...r, isUserSubmitted: false })),
-          ...formattedDatabaseRestaurants
-        ];
-
-        console.log(`Loaded ${hardcodedRestaurants.length} hardcoded restaurants`);
-        console.log(`Loaded ${databaseRestaurants.length} user-submitted restaurants`);
-        console.log(`Total: ${combinedRestaurants.length} restaurants`);
-
-        setRestaurants(combinedRestaurants);
+        
+        // Combine both sources
+        const allRestaurants = [...hardcodedRestaurants, ...databaseRestaurants];
+        console.log('Total restaurants combined:', allRestaurants.length);
+        
+        setRestaurants(allRestaurants);
         setError(null);
       } catch (error) {
-        console.error('Error loading restaurants:', error);
-        setError('Failed to load restaurants');
+        console.error('Error fetching restaurants:', error);
+        setError('Failed to load restaurant data');
+        // Fallback to just hardcoded restaurants if available
+        try {
+          setRestaurants(allRestaurantsData.restaurants);
+        } catch (fallbackError) {
+          setRestaurants([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -90,36 +79,25 @@ export default function RestaurantsPage() {
     fetchAllRestaurants();
   }, []);
 
-  // Handle URL search parameter
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const searchParam = urlParams.get('search');
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    }
-  }, [location.search]);
+  // Get unique counties and cuisines from combined data
+  const counties = useMemo(() => {
+    const allCounties = [...new Set(restaurants.map(r => r.county))];
+    return allCounties.sort();
+  }, [restaurants]);
 
-  // Dynamic helper functions
-  const getUniqueCounties = () => {
-    const counties = [...new Set(restaurants.map(r => r.county))];
-    return counties.sort();
-  };
+  const cuisines = useMemo(() => {
+    const allCuisines = [...new Set(restaurants.map(r => r.cuisine))];
+    return allCuisines.sort();
+  }, [restaurants]);
 
-  const getUniqueCuisines = () => {
-    const cuisines = [...new Set(restaurants.map(r => r.cuisine))];
-    return cuisines.sort();
-  };
-
-  const counties = getUniqueCounties();
-  const cuisines = getUniqueCuisines();
-
+  // Filter restaurants based on search and filters
   const filteredRestaurants = useMemo(() => {
     return restaurants.filter(restaurant => {
       const matchesSearch = searchTerm === '' || 
         restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (restaurant.description && restaurant.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        restaurant.description?.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCounty = selectedCounty === 'All Counties' || restaurant.county === selectedCounty;
       const matchesCuisine = selectedCuisine === 'All Cuisines' || restaurant.cuisine === selectedCuisine;
@@ -128,45 +106,159 @@ export default function RestaurantsPage() {
     });
   }, [restaurants, searchTerm, selectedCounty, selectedCuisine]);
 
-  const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedCounty('All Counties');
-    setSelectedCuisine('All Cuisines');
-  };
-
-  const groupedRestaurants = useMemo(() => {
-    const grouped = {};
-    filteredRestaurants.forEach(restaurant => {
-      if (!grouped[restaurant.county]) {
-        grouped[restaurant.county] = [];
-      }
-      grouped[restaurant.county].push(restaurant);
-    });
-    return grouped;
+  const featuredRestaurants = useMemo(() => {
+    return filteredRestaurants.filter(restaurant => restaurant.featured);
   }, [filteredRestaurants]);
 
-  const getPriceSymbol = (priceRange) => {
-    const symbols = { '$': '$', '$$': '$$', '$$$': '$$$', '$$$$': '$$$$' };
-    return symbols[priceRange] || '$$';
-  };
+  const regularRestaurants = useMemo(() => {
+    return filteredRestaurants.filter(restaurant => !restaurant.featured);
+  }, [filteredRestaurants]);
 
-  const handleWriteReview = (restaurant) => {
+  // Handle clearing search results from URL state
+  useEffect(() => {
+    if (location.state?.clearSearch) {
+      setSearchTerm('');
+      setSelectedCounty('All Counties');
+      setSelectedCuisine('All Cuisines');
+    }
+  }, [location.state]);
+
+  const openReviewModal = (restaurant) => {
     setSelectedRestaurant(restaurant);
     setIsReviewModalOpen(true);
   };
 
-  const handleCloseReviewModal = () => {
-    setIsReviewModalOpen(false);
-    setSelectedRestaurant(null);
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return null;
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    }
+    return phone;
   };
 
-  // Loading and error states
+  const formatPriceRange = (priceRange) => {
+    const dollarCount = priceRange?.length || 1;
+    return '$'.repeat(Math.min(dollarCount, 4));
+  };
+
+  const RestaurantCard = ({ restaurant }) => (
+    <Card className="h-full hover:shadow-lg transition-shadow duration-200 group">
+      <CardContent className="p-4 h-full flex flex-col">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-semibold text-lg group-hover:text-blue-600 transition-colors line-clamp-2">
+            {restaurant.name}
+          </h3>
+          {restaurant.isUserSubmitted && (
+            <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full ml-2 flex-shrink-0">
+              New!
+            </span>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+          <MapPin className="w-4 h-4 flex-shrink-0" />
+          <span className="line-clamp-1">{restaurant.city}, {restaurant.county}</span>
+        </div>
+        
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+            {restaurant.cuisine}
+          </span>
+          <div className="flex items-center gap-1">
+            <DollarSign className="w-4 h-4 text-green-600" />
+            <span className="text-sm font-medium text-green-600">
+              {formatPriceRange(restaurant.price_range)}
+            </span>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2 mb-3">
+          <StarDisplay rating={restaurant.rating} size="sm" />
+          <span className="text-sm text-gray-600">
+            {restaurant.rating} ({restaurant.review_count} reviews)
+          </span>
+        </div>
+        
+        <p className="text-sm text-gray-700 mb-4 line-clamp-3 flex-grow">
+          {restaurant.description}
+        </p>
+        
+        <div className="space-y-2 text-sm text-gray-600">
+          {restaurant.address && (
+            <div className="flex items-start gap-2">
+              <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <span className="line-clamp-2">{restaurant.address}</span>
+            </div>
+          )}
+          
+          {restaurant.phone && (
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 flex-shrink-0" />
+              <a href={`tel:${restaurant.phone}`} className="hover:text-blue-600 transition-colors">
+                {formatPhoneNumber(restaurant.phone)}
+              </a>
+            </div>
+          )}
+          
+          {restaurant.website && (
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 flex-shrink-0" />
+              <a 
+                href={restaurant.website.startsWith('http') ? restaurant.website : `https://${restaurant.website}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-blue-600 transition-colors line-clamp-1"
+              >
+                {restaurant.website}
+              </a>
+            </div>
+          )}
+          
+          {restaurant.hours && (
+            <div className="flex items-start gap-2">
+              <Clock className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <span className="line-clamp-2">{restaurant.hours}</span>
+            </div>
+          )}
+        </div>
+        
+        <div className="flex gap-2 mt-4 pt-4 border-t">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => openReviewModal(restaurant)}
+            className="flex-1"
+          >
+            <MessageSquare className="w-4 h-4 mr-1" />
+            Reviews
+          </Button>
+          <Link to="/suggest-restaurant">
+            <Button variant="outline" size="sm">
+              <Plus className="w-4 h-4 mr-1" />
+              Suggest
+            </Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading restaurants...</p>
+      <div className="min-h-screen bg-white">
+        <div 
+          className="relative h-64 bg-cover bg-center"
+          style={{ backgroundImage: `url(${mountainBackground})` }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          <div className="relative z-10 flex flex-col justify-center items-center h-full text-white">
+            <h1 className="text-4xl font-bold mb-4">East Tennessee Restaurants</h1>
+            <p className="text-xl text-center max-w-2xl">Loading restaurant data...</p>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">Loading restaurants...</div>
         </div>
       </div>
     );
@@ -174,215 +266,132 @@ export default function RestaurantsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()} className="tennsational-orange">
-            Retry
-          </Button>
+      <div className="min-h-screen bg-white">
+        <div 
+          className="relative h-64 bg-cover bg-center"
+          style={{ backgroundImage: `url(${mountainBackground})` }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          <div className="relative z-10 flex flex-col justify-center items-center h-full text-white">
+            <h1 className="text-4xl font-bold mb-4">East Tennessee Restaurants</h1>
+            <p className="text-xl text-center max-w-2xl">Error loading restaurant data</p>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center text-red-600">{error}</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
       <div 
-        className="relative bg-white shadow-sm"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(${mountainBackground})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
+        className="relative h-64 bg-cover bg-center"
+        style={{ backgroundImage: `url(${mountainBackground})` }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">Restaurants in East Tennessee</h1>
-            <Link to="/submit">
-              <Button className="tennsational-orange">
-                <Plus className="w-4 h-4 mr-2" />
-                Submit a Restaurant
-              </Button>
-            </Link>
-          </div>
-          
-          {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Input
-              type="text"
-              placeholder="Search restaurants..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="md:col-span-1"
-            />
-            
-            <Select value={selectedCounty} onValueChange={setSelectedCounty}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Counties" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All Counties">All Counties</SelectItem>
-                {counties.map(county => (
-                  <SelectItem key={county} value={county}>{county}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Select value={selectedCuisine} onValueChange={setSelectedCuisine}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Cuisines" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All Cuisines">All Cuisines</SelectItem>
-                {cuisines.map(cuisine => (
-                  <SelectItem key={cuisine} value={cuisine}>{cuisine}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Button 
-              variant="outline" 
-              onClick={clearFilters}
-              className="border-primary text-primary hover:bg-primary hover:text-white"
-            >
-              Clear Filters
-            </Button>
-          </div>
-          
-          <p className="text-gray-600 mb-8">Showing {filteredRestaurants.length} restaurants</p>
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="relative z-10 flex flex-col justify-center items-center h-full text-white">
+          <h1 className="text-4xl font-bold mb-4">East Tennessee Restaurants</h1>
+          <p className="text-xl text-center max-w-2xl">
+            Discover the best dining experiences in the heart of the Smoky Mountains
+          </p>
         </div>
       </div>
 
-      {/* Restaurant Listings */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {Object.entries(groupedRestaurants).map(([county, countyRestaurants]) => (
-          <div key={county} className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {county} ({countyRestaurants.length} restaurants)
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {countyRestaurants.map((restaurant) => (
-                <Card key={restaurant.id} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900">
-                          {restaurant.name}
-                          {restaurant.isUserSubmitted && (
-                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              New!
-                            </span>
-                          )}
-                        </h3>
-                      </div>
-                      <StarDisplay 
-                        rating={restaurant.rating || 0} 
-                        reviewCount={restaurant.review_count || restaurant.reviews || 0}
-                        size="small"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-gray-600">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        <span className="text-sm">{restaurant.address}</span>
-                      </div>
-                      
-                      {restaurant.phone && (
-                        <div className="flex items-center text-gray-600">
-                          <Phone className="w-4 h-4 mr-2" />
-                          <span className="text-sm">{restaurant.phone}</span>
-                        </div>
-                      )}
-                      
-                      {restaurant.website && (
-                        <div className="flex items-center text-gray-600">
-                          <Globe className="w-4 h-4 mr-2" />
-                          <a 
-                            href={restaurant.website.startsWith('http') ? restaurant.website : `https://${restaurant.website}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-primary hover:underline"
-                          >
-                            {restaurant.website}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-                        {restaurant.cuisine}
-                      </span>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-600">
-                          {restaurant.review_count || restaurant.reviews || 0} reviews
-                        </span>
-                        <span className="text-sm font-medium text-primary">
-                          {getPriceSymbol(restaurant.price_range)}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {restaurant.description && (
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {restaurant.description}
-                      </p>
-                    )}
-                    
-                    {restaurant.amenities && restaurant.amenities.length > 0 && (
-                      <div className="mb-4">
-                        <div className="flex flex-wrap gap-1">
-                          {restaurant.amenities.slice(0, 3).map((amenity, idx) => (
-                            <span key={idx} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                              {amenity}
-                            </span>
-                          ))}
-                          {restaurant.amenities.length > 3 && (
-                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                              +{restaurant.amenities.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Search and Filters */}
+        <div className="mb-8 space-y-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <Input
+                placeholder="Search restaurants by name, city, cuisine, or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Select value={selectedCounty} onValueChange={setSelectedCounty}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All Counties">All Counties</SelectItem>
+                  {counties.map(county => (
+                    <SelectItem key={county} value={county}>{county}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedCuisine} onValueChange={setSelectedCuisine}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All Cuisines">All Cuisines</SelectItem>
+                  {cuisines.map(cuisine => (
+                    <SelectItem key={cuisine} value={cuisine}>{cuisine}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="text-sm text-gray-600">
+            Showing {filteredRestaurants.length} restaurants
+          </div>
+        </div>
 
-                    <Button 
-                      onClick={() => handleWriteReview(restaurant)}
-                      variant="outline"
-                      size="sm"
-                      className="w-full mt-4"
-                    >
-                      <MessageSquare className="w-4 h-4 mr-2" />
-                      Write Review
-                    </Button>
-                  </CardContent>
-                </Card>
+        {/* Featured Restaurants */}
+        {featuredRestaurants.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Star className="w-6 h-6 text-yellow-500" />
+              Featured Restaurants
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredRestaurants.map((restaurant) => (
+                <RestaurantCard key={`featured-${restaurant.id}`} restaurant={restaurant} />
               ))}
             </div>
           </div>
-        ))}
-        
-        {filteredRestaurants.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No restaurants found matching your criteria.</p>
-            <Button 
-              onClick={clearFilters}
-              className="mt-4 tennsational-orange"
-            >
-              Clear Filters
-            </Button>
-          </div>
         )}
+
+        {/* All Restaurants */}
+        <div>
+          <h2 className="text-2xl font-bold mb-6">All Restaurants</h2>
+          {regularRestaurants.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {regularRestaurants.map((restaurant) => (
+                <RestaurantCard key={`regular-${restaurant.id}`} restaurant={restaurant} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No restaurants found matching your criteria.</p>
+              <Button 
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedCounty('All Counties');
+                  setSelectedCuisine('All Cuisines');
+                }}
+                className="mt-4"
+              >
+                Clear Filters
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Review Modal */}
-      <ReviewModal 
-        isOpen={isReviewModalOpen} 
-        onClose={handleCloseReviewModal}
-        preselectedRestaurant={selectedRestaurant}
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        restaurant={selectedRestaurant}
       />
     </div>
   );
