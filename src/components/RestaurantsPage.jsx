@@ -8,6 +8,7 @@ import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus, MessageSquare } fr
 import { StarDisplay } from './ui/star-rating';
 import { ReviewModal } from './ReviewModal';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
+import allRestaurantsData from '../data/allrestaurants.json';
 import '../App.css';
 
 export default function RestaurantsPage() {
@@ -18,33 +19,75 @@ export default function RestaurantsPage() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   
-  // NEW: State for dynamic restaurant data
+  // State for combined restaurant data
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // NEW: Fetch restaurants from database
+  // NEW: Fetch and combine restaurants from both sources
   useEffect(() => {
-    const fetchRestaurants = async () => {
+    const fetchAllRestaurants = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/restaurants/approved');
-        if (response.ok) {
-          const data = await response.json();
-          setRestaurants(data);
-        } else {
-          console.error('Failed to fetch restaurants');
-          setError('Failed to load restaurants');
+        
+        // Start with hardcoded restaurants from JSON file
+        const hardcodedRestaurants = allRestaurantsData.restaurants;
+        
+        // Fetch user-submitted approved restaurants from database
+        let databaseRestaurants = [];
+        try {
+          const response = await fetch('/api/restaurants/approved');
+          if (response.ok) {
+            databaseRestaurants = await response.json();
+          } else {
+            console.log('No approved restaurants from database yet');
+          }
+        } catch (dbError) {
+          console.log('Could not fetch database restaurants:', dbError);
+          // Continue with just hardcoded restaurants if database fails
         }
+
+        // Convert database restaurants to match hardcoded format
+        const formattedDatabaseRestaurants = databaseRestaurants.map(restaurant => ({
+          id: `db-${restaurant.id}`, // Prefix with 'db-' to avoid ID conflicts
+          name: restaurant.name,
+          county: restaurant.county,
+          city: restaurant.city,
+          cuisine: restaurant.cuisine,
+          price_range: restaurant.price_range || '$$',
+          rating: restaurant.rating || 0,
+          review_count: restaurant.reviews || 0,
+          address: restaurant.address,
+          phone: restaurant.phone || '',
+          website: restaurant.website || '',
+          hours: restaurant.hours || 'Hours not specified',
+          amenities: restaurant.amenities || [],
+          featured: false, // User-submitted restaurants are not featured by default
+          description: restaurant.description || 'Great local restaurant',
+          isUserSubmitted: true // Flag to identify user-submitted restaurants
+        }));
+
+        // Combine both arrays - hardcoded first, then database restaurants
+        const combinedRestaurants = [
+          ...hardcodedRestaurants.map(r => ({ ...r, isUserSubmitted: false })),
+          ...formattedDatabaseRestaurants
+        ];
+
+        console.log(`Loaded ${hardcodedRestaurants.length} hardcoded restaurants`);
+        console.log(`Loaded ${databaseRestaurants.length} user-submitted restaurants`);
+        console.log(`Total: ${combinedRestaurants.length} restaurants`);
+
+        setRestaurants(combinedRestaurants);
+        setError(null);
       } catch (error) {
-        console.error('Error fetching restaurants:', error);
-        setError('Error loading restaurants');
+        console.error('Error loading restaurants:', error);
+        setError('Failed to load restaurants');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRestaurants();
+    fetchAllRestaurants();
   }, []);
 
   // Handle URL search parameter
@@ -56,7 +99,7 @@ export default function RestaurantsPage() {
     }
   }, [location.search]);
 
-  // NEW: Dynamic helper functions
+  // Dynamic helper functions
   const getUniqueCounties = () => {
     const counties = [...new Set(restaurants.map(r => r.county))];
     return counties.sort();
@@ -75,7 +118,8 @@ export default function RestaurantsPage() {
       const matchesSearch = searchTerm === '' || 
         restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
+        restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (restaurant.description && restaurant.description.toLowerCase().includes(searchTerm.toLowerCase()));
       
       const matchesCounty = selectedCounty === 'All Counties' || restaurant.county === selectedCounty;
       const matchesCuisine = selectedCuisine === 'All Cuisines' || restaurant.cuisine === selectedCuisine;
@@ -116,7 +160,7 @@ export default function RestaurantsPage() {
     setSelectedRestaurant(null);
   };
 
-  // NEW: Loading and error states
+  // Loading and error states
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -223,10 +267,19 @@ export default function RestaurantsPage() {
                 <Card key={restaurant.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-xl font-semibold text-gray-900">{restaurant.name}</h3>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-gray-900">
+                          {restaurant.name}
+                          {restaurant.isUserSubmitted && (
+                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              New!
+                            </span>
+                          )}
+                        </h3>
+                      </div>
                       <StarDisplay 
                         rating={restaurant.rating || 0} 
-                        reviewCount={restaurant.reviews || 0}
+                        reviewCount={restaurant.review_count || restaurant.reviews || 0}
                         size="small"
                       />
                     </div>
@@ -264,7 +317,9 @@ export default function RestaurantsPage() {
                         {restaurant.cuisine}
                       </span>
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-600">{restaurant.reviews || 0} reviews</span>
+                        <span className="text-sm text-gray-600">
+                          {restaurant.review_count || restaurant.reviews || 0} reviews
+                        </span>
                         <span className="text-sm font-medium text-primary">
                           {getPriceSymbol(restaurant.price_range)}
                         </span>
