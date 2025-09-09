@@ -8,7 +8,8 @@ import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus, MessageSquare } fr
 import { StarDisplay } from './ui/star-rating';
 import { ReviewModal } from './ReviewModal';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
-import allRestaurantsData from '../data/allrestaurants.json';
+import allRestaurantsData from '../../data/allrestaurants.json';
+console.log('JSON Import Test:', allRestaurantsData ? 'SUCCESS' : 'FAILED', allRestaurantsData?.restaurants?.length || 'No restaurants');
 import '../App.css';
 
 export default function RestaurantsPage() {
