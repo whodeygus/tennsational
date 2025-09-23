@@ -4,9 +4,8 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Star, MapPin, Phone, Globe, Clock, DollarSign, Plus, MessageSquare } from 'lucide-react';
+import { Star, MapPin, Phone, Globe, Clock, DollarSign } from 'lucide-react';
 import { StarDisplay } from './ui/star-rating';
-import { ReviewModal } from './ReviewModal';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import allRestaurantsData from '../data/allrestaurants.json';
 import '../App.css';
@@ -16,15 +15,13 @@ export default function RestaurantsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCounty, setSelectedCounty] = useState('All Counties');
   const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   
   // State for combined restaurant data
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // NEW: Fetch and combine restaurants from both sources
+  // Fetch and combine restaurants from both sources
   useEffect(() => {
     const fetchAllRestaurants = async () => {
       try {
@@ -123,11 +120,6 @@ export default function RestaurantsPage() {
     }
   }, [location.state]);
 
-  const openReviewModal = (restaurant) => {
-    setSelectedRestaurant(restaurant);
-    setIsReviewModalOpen(true);
-  };
-
   const formatPhoneNumber = (phone) => {
     if (!phone) return null;
     const cleaned = phone.replace(/\D/g, '');
@@ -223,22 +215,37 @@ export default function RestaurantsPage() {
           )}
         </div>
         
+        {/* FIXED: Replaced broken buttons with working Call/Website buttons */}
         <div className="flex gap-2 mt-4 pt-4 border-t">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => openReviewModal(restaurant)}
-            className="flex-1"
-          >
-            <MessageSquare className="w-4 h-4 mr-1" />
-            Reviews
-          </Button>
-          <Link to="/suggest-restaurant">
-            <Button variant="outline" size="sm">
-              <Plus className="w-4 h-4 mr-1" />
-              Suggest
-            </Button>
-          </Link>
+          {restaurant.phone && (
+            <a 
+              href={`tel:${restaurant.phone}`} 
+              className="flex-1"
+            >
+              <Button variant="outline" size="sm" className="w-full">
+                <Phone className="w-4 h-4 mr-1" />
+                Call
+              </Button>
+            </a>
+          )}
+          {restaurant.website && (
+            <a 
+              href={restaurant.website.startsWith('http') ? restaurant.website : `https://${restaurant.website}`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex-1"
+            >
+              <Button variant="outline" size="sm" className="w-full">
+                <Globe className="w-4 h-4 mr-1" />
+                Website
+              </Button>
+            </a>
+          )}
+          {!restaurant.phone && !restaurant.website && (
+            <div className="flex-1 text-center text-sm text-gray-500 py-2">
+              Contact info not available
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -386,13 +393,6 @@ export default function RestaurantsPage() {
           )}
         </div>
       </div>
-
-      {/* Review Modal */}
-      <ReviewModal
-        isOpen={isReviewModalOpen}
-        onClose={() => setIsReviewModalOpen(false)}
-        restaurant={selectedRestaurant}
-      />
     </div>
   );
 }
