@@ -1,23 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
-import { Button } from './ui/button';
 import { Input } from './ui/input';
-import ReviewModal from './ReviewModal';
 import logoHeader from '../assets/tennsational_logo_new.png';
 import '../App.css';
 
 export default function Header() {
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleWriteReview = () => {
-    setIsReviewModalOpen(true);
-  };
-
-  const handleCloseReviewModal = () => {
-    setIsReviewModalOpen(false);
-  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -26,6 +15,7 @@ export default function Header() {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
+
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,7 +57,7 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* Search and CTA */}
+          {/* Search */}
           <div className="flex items-center space-x-4">
             <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -77,12 +67,6 @@ export default function Header() {
                 className="pl-10 w-64"
               />
             </div>
-            <Button 
-              onClick={handleWriteReview}
-              className="tennsational-orange hidden sm:block"
-            >
-              Write Review
-            </Button>
             
             {/* Mobile menu button */}
             <button
@@ -138,27 +122,9 @@ export default function Header() {
             >
               Privacy Policy
             </Link>
-            <div className="px-3 py-2">
-              <Button 
-                onClick={() => {
-                  handleWriteReview();
-                  closeMobileMenu();
-                }}
-                className="tennsational-orange w-full"
-              >
-                Write Review
-              </Button>
-            </div>
           </div>
         </div>
       )}
-
-      {/* Review Modal */}
-      <ReviewModal 
-        isOpen={isReviewModalOpen} 
-        onClose={handleCloseReviewModal}
-      />
     </header>
   );
 }
-
