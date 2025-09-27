@@ -1,14 +1,31 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent } from './ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Star, MapPin, Phone, Globe, Clock, DollarSign } from 'lucide-react';
-import { StarDisplay } from './ui/star-rating';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import allRestaurantsData from '../data/allRestaurants.json';
 import '../App.css';
+
+// Simple star display component
+const StarDisplay = ({ rating, size = "sm" }) => {
+  const stars = [];
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
+  
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(<Star key={i} className={`${size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'} fill-yellow-400 text-yellow-400`} />);
+  }
+  
+  if (hasHalfStar) {
+    stars.push(<Star key="half" className={`${size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'} text-yellow-400`} />);
+  }
+  
+  const emptyStars = 5 - Math.ceil(rating);
+  for (let i = 0; i < emptyStars; i++) {
+    stars.push(<Star key={`empty-${i}`} className={`${size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'} text-gray-300`} />);
+  }
+  
+  return <div className="flex">{stars}</div>;
+};
 
 export default function RestaurantsPage() {
   const location = useLocation();
@@ -135,8 +152,8 @@ export default function RestaurantsPage() {
   };
 
   const RestaurantCard = ({ restaurant }) => (
-    <Card className="h-full hover:shadow-lg transition-shadow duration-200 group">
-      <CardContent className="p-4 h-full flex flex-col">
+    <div className="h-full hover:shadow-lg transition-shadow duration-200 group border border-gray-200 rounded-lg">
+      <div className="p-4 h-full flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-semibold text-lg group-hover:text-blue-600 transition-colors line-clamp-2">
             {restaurant.name}
@@ -222,10 +239,10 @@ export default function RestaurantsPage() {
               href={`tel:${restaurant.phone}`} 
               className="flex-1"
             >
-              <Button variant="outline" size="sm" className="w-full">
-                <Phone className="w-4 h-4 mr-1" />
+              <button className="w-full border border-blue-600 text-blue-600 px-3 py-2 rounded text-sm hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-1">
+                <Phone className="w-4 h-4" />
                 Call
-              </Button>
+              </button>
             </a>
           )}
           {restaurant.website && (
@@ -235,10 +252,10 @@ export default function RestaurantsPage() {
               rel="noopener noreferrer"
               className="flex-1"
             >
-              <Button variant="outline" size="sm" className="w-full">
-                <Globe className="w-4 h-4 mr-1" />
+              <button className="w-full border border-blue-600 text-blue-600 px-3 py-2 rounded text-sm hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-1">
+                <Globe className="w-4 h-4" />
                 Website
-              </Button>
+              </button>
             </a>
           )}
           {!restaurant.phone && !restaurant.website && (
@@ -247,8 +264,8 @@ export default function RestaurantsPage() {
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 
   if (loading) {
@@ -264,7 +281,7 @@ export default function RestaurantsPage() {
             <p className="text-xl text-center max-w-2xl">Loading restaurant data...</p>
           </div>
         </div>
-        <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="text-center">Loading restaurants...</div>
         </div>
       </div>
@@ -284,7 +301,7 @@ export default function RestaurantsPage() {
             <p className="text-xl text-center max-w-2xl">Error loading restaurant data</p>
           </div>
         </div>
-        <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="text-center text-red-600">{error}</div>
         </div>
       </div>
@@ -308,42 +325,41 @@ export default function RestaurantsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Search and Filters */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <Input
+              <input
+                type="text"
                 placeholder="Search restaurants by name, city, cuisine, or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex gap-2">
-              <Select value={selectedCounty} onValueChange={setSelectedCounty}>
-                <SelectTrigger className="w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All Counties">All Counties</SelectItem>
-                  {counties.map(county => (
-                    <SelectItem key={county} value={county}>{county}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select 
+                value={selectedCounty} 
+                onChange={(e) => setSelectedCounty(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All Counties">All Counties</option>
+                {counties.map(county => (
+                  <option key={county} value={county}>{county}</option>
+                ))}
+              </select>
               
-              <Select value={selectedCuisine} onValueChange={setSelectedCuisine}>
-                <SelectTrigger className="w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All Cuisines">All Cuisines</SelectItem>
-                  {cuisines.map(cuisine => (
-                    <SelectItem key={cuisine} value={cuisine}>{cuisine}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select 
+                value={selectedCuisine} 
+                onChange={(e) => setSelectedCuisine(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All Cuisines">All Cuisines</option>
+                {cuisines.map(cuisine => (
+                  <option key={cuisine} value={cuisine}>{cuisine}</option>
+                ))}
+              </select>
             </div>
           </div>
           
@@ -379,16 +395,16 @@ export default function RestaurantsPage() {
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-600">No restaurants found matching your criteria.</p>
-              <Button 
+              <button 
                 onClick={() => {
                   setSearchTerm('');
                   setSelectedCounty('All Counties');
                   setSelectedCuisine('All Cuisines');
                 }}
-                className="mt-4"
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
               >
                 Clear Filters
-              </Button>
+              </button>
             </div>
           )}
         </div>
