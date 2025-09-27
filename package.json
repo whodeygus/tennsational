@@ -2,7 +2,6 @@
   "name": "tennsational-restaurant-directory",
   "version": "1.0.0",
   "description": "East Tennessee Restaurant Directory",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "build": "vite build",
@@ -10,7 +9,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "sqlite3": "^5.1.6",
+    "sqlite3": "^5.1.6", 
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "bcryptjs": "^2.4.3",
@@ -19,13 +18,10 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
-    "vite": "^4.4.0",
-    "tailwindcss": "^3.3.0",
-    "lucide-react": "^0.263.1"
+    "vite": "^4.4.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.0.0",
-    "@tailwindcss/vite": "^4.0.0-alpha.15"
+    "@vitejs/plugin-react": "^4.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
