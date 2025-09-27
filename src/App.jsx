@@ -4,7 +4,6 @@ import HomePage from './components/HomePage';
 import RestaurantsPage from './components/RestaurantsPage';
 import AboutPage from './components/AboutPage';
 import PrivacyPolicy from './components/PrivacyPolicy';
-import SubmitRestaurant from './components/SubmitRestaurant';
 import MerchPage from './components/MerchPage';
 import './App.css';
 
