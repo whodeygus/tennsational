@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Star, MapPin, Phone, Globe, Clock, DollarSign } from 'lucide-react';
 import { StarDisplay } from './ui/star-rating';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
-import allRestaurantsData from '../data/allrestaurants.json';
+import allRestaurantsData from '../data/allRestaurants.json';
 import '../App.css';
 
 export default function RestaurantsPage() {
