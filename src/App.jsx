@@ -5,7 +5,6 @@ import RestaurantsPage from './components/RestaurantsPage.jsx';
 import AboutPage from './components/AboutPage.jsx';
 import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import MerchPage from './components/MerchPage.jsx';
-import AdminDashboard from './components/AdminDashboard.jsx';
 import './App.css';
 
 function App() {
@@ -20,7 +19,6 @@ function App() {
             <Route path="/merch" element={<MerchPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>
       </div>
