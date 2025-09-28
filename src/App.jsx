@@ -1,10 +1,11 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import HomePage from './components/HomePage';
-import RestaurantsPage from './components/RestaurantsPage';
-import AboutPage from './components/AboutPage';
-import PrivacyPolicy from './components/PrivacyPolicy';
-import MerchPage from './components/MerchPage';
+import Header from './components/Header.jsx';
+import HomePage from './components/HomePage.jsx';
+import RestaurantsPage from './components/RestaurantsPage.jsx';
+import AboutPage from './components/AboutPage.jsx';
+import PrivacyPolicy from './components/PrivacyPolicy.jsx';
+import MerchPage from './components/MerchPage.jsx';
+import AdminDashboard from './components/AdminDashboard.jsx';
 import './App.css';
 
 function App() {
@@ -19,7 +20,6 @@ function App() {
             <Route path="/merch" element={<MerchPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/submit" element={<SubmitRestaurant />} />
             <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>
