@@ -45,7 +45,6 @@ const Button = ({ children, className = '', variant = 'primary', ...props }) => 
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [newsletterData, setNewsletterData] = useState({
     firstName: '',
     lastName: '',
@@ -273,33 +272,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="border-primary/20 hover:border-primary/40 transition-colors">
-              <CardContent className="p-8 text-center">
-                <Award className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Restaurant Owners</h3>
-                <p className="text-gray-600 mb-6">
-                  List your restaurant for free and connect with thousands of potential customers across East Tennessee.
-                </p>
-                <Link to="/add-restaurant">
-                  <Button className="tennsational-orange w-full">Add Your Restaurant</Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card className="border-primary/20 hover:border-primary/40 transition-colors">
-              <CardContent className="p-8 text-center">
-                <Users className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Food Lovers</h3>
-                <p className="text-gray-600 mb-6">
-                  Share your dining experiences and help others discover amazing restaurants across Tennessee.
-                </p>
-                <Button className="tennsational-orange w-full" onClick={() => setIsReviewModalOpen(true)}>
-                  Write a Review
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+        
         </div>
       </section>
 
