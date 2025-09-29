@@ -4,7 +4,6 @@ import { Star, MapPin, Users, Award } from 'lucide-react';
 import logoHero from '../assets/tennsational_logo_new.png';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import { getRestaurantStats } from '../data/restaurants';
-import ReviewModal from './ReviewModal';
 import '../App.css';
 
 /** ---- Minimal inline UI helpers so we don't rely on ./ui/* files ---- */
@@ -349,8 +348,6 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {/* Review Modal */}
-      <ReviewModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} />
     </div>
   );
 }
