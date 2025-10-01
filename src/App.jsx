@@ -4,7 +4,7 @@ import HomePage from './components/HomePage.jsx';
 import RestaurantsPage from './components/RestaurantsPage.jsx';
 import AboutPage from './components/AboutPage.jsx';
 import PrivacyPolicy from './components/PrivacyPolicy.jsx';
-// Removed MerchPage import
+import MerchPage from './components/MerchPage.jsx'; // This line was commented out, now active
 import './App.css';
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/restaurants" element={<RestaurantsPage />} />
-            {/* Removed merch route */}
+            <Route path="/merch" element={<MerchPage />} /> {/* This route was commented out, now active */}
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
           </Routes>
