@@ -497,4 +497,57 @@ button:disabled {
 }
 
 @media (min-width: 768px) {
-  .md\:grid-cols-3
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .md\:flex-row {
+    flex-direction: row;
+  }
+  .md\:mb-0 {
+    margin-bottom: 0;
+  }
+  .md\:mr-8 {
+    margin-right: 2rem;
+  }
+  .md\:space-y-0 > * + * {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  .lg\:flex-row {
+    flex-direction: row;
+  }
+  .lg\:w-1\/2 {
+    width: 50%;
+  }
+  .lg\:pl-12 {
+    padding-left: 3rem;
+  }
+  .lg\:mb-0 {
+    margin-bottom: 0;
+  }
+}
+
+/* Footer link styling - override browser defaults */
+footer a {
+  color: #9CA3AF !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: white !important;
+}
+
+footer a[aria-label="Facebook"]:hover,
+footer a[aria-label="Instagram"]:hover {
+  color: #EA580C !important;
+}
