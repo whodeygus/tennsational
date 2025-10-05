@@ -37,7 +37,7 @@ export const getUniqueCuisines = () => {
 
 export const getRestaurantStats = () => {
   const totalRestaurants = restaurants.length;
-  const totalReviews = restaurants.reduce((sum, r) => sum + (r.reviews || 0), 0);
+  const totalReviews = restaurants.reduce((sum, r) => sum + (r.review_count || 0), 0);
   const totalCounties = getUniqueCounties().length;
   const avgRating = restaurants.reduce((sum, r) => sum + (r.rating || 0), 0) / totalRestaurants;
   
