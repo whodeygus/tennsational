@@ -76,23 +76,25 @@ export default function HomePage() {
     setIsSubmittingNewsletter(true);
 
     try {
-      const response = await fetch('/api/newsletter/subscribe', {
+      const response = await fetch('https://formspree.io/f/mvgwqkvn', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newsletterData),
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          firstName: newsletterData.firstName,
+          lastName: newsletterData.lastName,
+          email: newsletterData.email,
+          _subject: 'New Newsletter Subscription - TENNsational'
+        }),
       });
-
-      const result = await response.json();
 
       if (response.ok) {
         alert("Thank you for subscribing! You'll receive our weekly restaurant updates and exclusive deals.");
         setNewsletterData({ firstName: '', lastName: '', email: '' });
       } else {
-        if (response.status === 409) {
-          alert('This email is already subscribed to our newsletter.');
-        } else {
-          alert(result.error || 'Failed to subscribe. Please try again.');
-        }
+        alert('Failed to subscribe. Please try again.');
       }
     } catch (error) {
       console.error('Newsletter subscription error:', error);
