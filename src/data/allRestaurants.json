@@ -3804,7 +3804,7 @@
     {
       "id": 148,
       "name": "The Chop House",
-      "county": "Jefferson County",
+      "county": "Sevier County",
       "city": "Kodak",
       "cuisine": "Steakhouse",
       "price_range": "$$$",
@@ -4188,7 +4188,7 @@
     {
       "id": 163,
       "name": "Flapjack's Pancake Cabin",
-      "county": "Jefferson County",
+      "county": "Sevier County",
       "city": "Kodak",
       "cuisine": "American",
       "price_range": "$$",
@@ -4370,7 +4370,7 @@
     {
       "id": 170,
       "name": "Don Marco's Mexican",
-      "county": "Jefferson County",
+      "county": "Sevier County",
       "city": "Kodak",
       "cuisine": "Mexican",
       "price_range": "$$",
@@ -5279,7 +5279,7 @@
     {
       "id": 207,
       "name": "Cracker Barrel Old Country Store",
-      "county": "Jefferson County",
+      "county": "Sevier County",
       "city": "Kodak",
       "cuisine": "American",
       "price_range": "$$",
