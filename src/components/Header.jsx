@@ -49,7 +49,7 @@ function Header() {
         {/* Mobile Navigation Menu */}
         {menuOpen && (
           <div className="md:hidden py-4 border-t" style={{ borderColor: '#f3f4f6' }}>
-            <div className="flex flex-col">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <Link to="/" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none', padding: '12px 0', display: 'block' }} onClick={() => setMenuOpen(false)}>
                 Home
               </Link>
