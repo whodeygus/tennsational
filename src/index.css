@@ -554,4 +554,16 @@ footer a[aria-label="Facebook"]:hover,
 footer a[aria-label="Instagram"]:hover {
   color: #EA580C !important;
 }
+/* Responsive navigation */
+@media (min-width: 768px) {
+  .desktop-nav {
+    display: flex !important;
+    align-items: center;
+  }
+  
+  .mobile-menu-btn {
+    display: none !important;
+  }
+}
+
 
