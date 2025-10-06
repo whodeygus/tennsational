@@ -124,10 +124,10 @@ export default function HomePage() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="w-full lg:w-1/2 text-center lg:text-left">
               <img
-                src={logoHero}
-                alt="TENNsational - Explore. Taste. Discover."
-                className="w-full max-w-sm md:max-w-md lg:max-w-lg h-auto mb-6 mx-auto lg:mx-0 drop-shadow-2xl"
-              />
+  src={logoHero}
+  alt="TENNsational - Explore. Taste. Discover."
+  className="w-full max-w-sm md:max-w-md lg:max-w-lg h-auto mb-3 md:mb-6 mx-auto lg:mx-0 drop-shadow-2xl"
+/>
               <p className="text-base md:text-lg lg:text-xl mb-8 text-white drop-shadow-lg px-4 lg:px-0">
                 East Tennessee Owned & Operated. The most comprehensive local restaurant directory,
                 connecting locals and visitors with the region&apos;s best dining experiences. From
