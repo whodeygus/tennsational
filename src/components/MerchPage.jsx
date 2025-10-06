@@ -6,11 +6,11 @@ const MerchPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 text-center">
           <img 
   src={logoHero} 
   alt="TENNsational Logo" 
-  className="w-48 h-auto mx-auto mb-6 drop-shadow-lg"
+  className="w-24 md:w-40 h-auto mx-auto mb-4 drop-shadow-lg"
 />
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Official Merchandise
