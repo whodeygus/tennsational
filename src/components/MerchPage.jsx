@@ -6,16 +6,19 @@ const MerchPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div className="bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 text-center">
-          <img 
-  src={logoHero} 
-  alt="TENNsational Logo" 
-  className="w-24 md:w-40 h-auto mx-auto mb-4 drop-shadow-lg"
-/>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
+          <div className="flex justify-center mb-4">
+            <img 
+              src={logoHero} 
+              alt="TENNsational Logo" 
+              style={{ width: '140px', height: 'auto' }}
+              className="drop-shadow-lg"
+            />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             Official Merchandise
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
             Show your East Tennessee pride with official TENNsational gear. T-shirts, hoodies, and more available now.
           </p>
           
@@ -29,7 +32,7 @@ const MerchPage = () => {
             Shop TENNsational Merch
           </a>
           
-          <p className="text-sm text-gray-500 mt-6">
+          <p className="text-sm text-gray-500 mt-4">
             All proceeds support local restaurant discovery in East Tennessee
           </p>
         </div>
