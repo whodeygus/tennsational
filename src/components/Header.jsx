@@ -49,17 +49,17 @@ function Header() {
         {/* Mobile Navigation Menu */}
         {menuOpen && (
           <div className="md:hidden py-4 border-t" style={{ borderColor: '#f3f4f6' }}>
-            <div className="flex flex-col" style={{ gap: '12px' }}>
-              <Link to="/" className="text-gray-700 hover:text-primary font-medium transition-colors py-2" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+            <div className="flex flex-col">
+              <Link to="/" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none', padding: '12px 0', display: 'block' }} onClick={() => setMenuOpen(false)}>
                 Home
               </Link>
-              <Link to="/restaurants" className="text-gray-700 hover:text-primary font-medium transition-colors py-2" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+              <Link to="/restaurants" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none', padding: '12px 0', display: 'block' }} onClick={() => setMenuOpen(false)}>
                 Restaurants
               </Link>
-              <Link to="/merch" className="text-gray-700 hover:text-primary font-medium transition-colors py-2" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+              <Link to="/merch" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none', padding: '12px 0', display: 'block' }} onClick={() => setMenuOpen(false)}>
                 Merch
               </Link>
-              <Link to="/about" className="text-gray-700 hover:text-primary font-medium transition-colors py-2" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+              <Link to="/about" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none', padding: '12px 0', display: 'block' }} onClick={() => setMenuOpen(false)}>
                 About
               </Link>
             </div>
