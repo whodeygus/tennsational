@@ -112,7 +112,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section
-        className="relative text-white py-20 min-h-[600px] flex items-center"
+        className="relative text-white py-12 md:py-20 min-h-[500px] md:min-h-[600px] flex items-center"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${mountainBackground})`,
           backgroundSize: 'cover',
@@ -120,15 +120,15 @@ export default function HomePage() {
           backgroundRepeat: 'no-repeat'
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center justify-between">
-            <div className="lg:w-1/2 mb-10 lg:mb-0 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="w-full lg:w-1/2 text-center lg:text-left">
               <img
                 src={logoHero}
                 alt="TENNsational - Explore. Taste. Discover."
-                className="w-96 h-auto mb-6 mx-auto drop-shadow-2xl"
+                className="w-full max-w-sm md:max-w-md lg:max-w-lg h-auto mb-6 mx-auto lg:mx-0 drop-shadow-2xl"
               />
-              <p className="text-xl mb-8 text-white drop-shadow-lg">
+              <p className="text-base md:text-lg lg:text-xl mb-8 text-white drop-shadow-lg px-4 lg:px-0">
                 East Tennessee Owned & Operated. The most comprehensive local restaurant directory,
                 connecting locals and visitors with the region&apos;s best dining experiences. From
                 hidden gems to popular favorites, we provide trusted reviews and insider recommendations
@@ -137,10 +137,10 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="lg:w-1/2 lg:pl-12 w-full">
+            <div className="w-full lg:w-1/2 lg:pl-12 px-4 lg:px-0">
               <Card className="bg-white/20 backdrop-blur-md border-white/30 shadow-2xl">
                 <CardContent>
-                  <h3 className="text-2xl font-bold mb-4 text-white drop-shadow-lg">
+                  <h3 className="text-xl md:text-2xl font-bold mb-4 text-white drop-shadow-lg">
                     Find Your Perfect Restaurant
                   </h3>
                   <div className="space-y-4">
