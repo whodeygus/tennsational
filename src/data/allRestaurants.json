@@ -15858,26 +15858,26 @@
       "featured_image": "https://lh3.googleusercontent.com/p/AF1QipOXzR9ppqTdgrGxkIdWpjWZLWl0XHWtX_2tODa8=s1024",
       "featured": false
   ],
-{
-  "id": 668,
-  "name": "Pancake Pantry",
-  "county": "Sevier County",
-  "city": "Gatlinburg",
-  "cuisine": "American",
-  "price_range": "$$",
-  "rating": 4.3,
-  "review_count": 5572,
-  "address": "628 Parkway, Gatlinburg, TN 37738",
-  "phone": "(865) 436-4724",
-  "website": "https://pancakepantry.com",
-  "hours": "7 AM-3 PM",
-  "description": "We offer twenty-four different varieties of pancakes, many waffles, farm fresh eggs, sizzling ham, bacon and more.",
-  "amenities": [],
-  "featured": false,
-  "google_link": "",
-  "featured_image": "",
-  "categories": "American"
-}
+{{
+      "id": 668,
+      "name": "Pancake Pantry",
+      "county": "Sevier County",
+      "city": "Gatlinburg",
+      "cuisine": "American",
+      "price_range": "$$",
+      "rating": 4.3,
+      "review_count": 5572,
+      "address": "628 Parkway, Gatlinburg, TN 37738",
+      "phone": "(865) 436-4724",
+      "website": "https://pancakepantry.com",
+      "hours": "7 AM-3 PM",
+      "description": "We offer twenty-four different varieties of pancakes, many waffles, farm fresh eggs, sizzling ham, bacon and more.",
+      "amenities": [],
+      "categories": "American",
+      "google_link": "",
+      "featured_image": "",
+      "featured": false
+    }
   ],
   "stats": {
     "restaurant_count": 620,
