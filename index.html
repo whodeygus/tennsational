@@ -1,26 +1,210 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HQKP56D1H8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- ============================================ -->
+    <!-- GOOGLE ANALYTICS (Your existing code - don't change!) -->
+    <!-- ============================================ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HQKP56D1H8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HQKP56D1H8');
+    </script>
 
-  gtag('config', 'G-HQKP56D1H8');
-</script>
-  <meta name="description" content="Discover the best restaurants in East Tennessee! Find top-rated dining in Knoxville, Pigeon Forge, Gatlinburg, and Sevierville. Local favorites, family restaurants, and hidden gems.">
-      <meta name="keywords" content="Tennessee restaurants, Knoxville dining, Pigeon Forge restaurants, Gatlinburg food, Sevierville restaurants, East Tennessee dining guide">
+    <!-- ============================================ -->
+    <!-- BASIC META TAGS -->
+    <!-- ============================================ -->
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>East Tennessee Restaurant Directory - Best Restaurants in Knoxville, Pigeon Forge, Gatlinburg, Sevierville & the Surrounding Areas</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PRIMARY SEO - Title and Description -->
+    <title>East Tennessee Restaurants | Tennsational Guide | Knoxville, Gatlinburg, Pigeon Forge & Chattanooga</title>
+    <meta name="description" content="Discover the best restaurants in East Tennessee! Find top-rated dining in Knoxville, Pigeon Forge, Gatlinburg, Sevierville, and Chattanooga. Local favorites, BBQ, fine dining, family restaurants, and hidden gems.">
+    <meta name="keywords" content="Tennessee restaurants, Knoxville dining, Pigeon Forge restaurants, Gatlinburg food, Sevierville restaurants, Chattanooga restaurants, East Tennessee dining guide, Tennessee BBQ, Smoky Mountains restaurants">
+    <meta name="author" content="Tennsational">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <!-- Canonical URL - Tells Google this is the main version of this page -->
+    <link rel="canonical" href="https://www.tennsational.com/" />
+
+    <!-- ============================================ -->
+    <!-- OPEN GRAPH TAGS (Facebook, LinkedIn sharing) -->
+    <!-- ============================================ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.tennsational.com/" />
+    <meta property="og:title" content="East Tennessee Restaurant Directory | Tennsational" />
+    <meta property="og:description" content="Your complete guide to the best restaurants in East Tennessee. From Knoxville BBQ to Gatlinburg fine dining, discover local favorites and hidden gems." />
+    <meta property="og:site_name" content="Tennsational" />
+    <meta property="og:locale" content="en_US" />
+    <!-- Add your image URL here once you have one -->
+    <meta property="og:image" content="https://www.tennsational.com/images/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- ============================================ -->
+    <!-- TWITTER CARD TAGS (Twitter/X sharing) -->
+    <!-- ============================================ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.tennsational.com/" />
+    <meta name="twitter:title" content="East Tennessee Restaurant Directory | Tennsational" />
+    <meta name="twitter:description" content="Discover the best restaurants in East Tennessee. Complete dining guide for Knoxville, Gatlinburg, Pigeon Forge, and beyond." />
+    <!-- Add your image URL here once you have one -->
+    <meta name="twitter:image" content="https://www.tennsational.com/images/twitter-image.jpg" />
+
+    <!-- ============================================ -->
+    <!-- STRUCTURED DATA (Tells Google exactly what your site is) -->
+    <!-- ============================================ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Tennsational",
+      "alternateName": "East Tennessee Restaurant Directory",
+      "url": "https://www.tennsational.com",
+      "description": "East Tennessee's comprehensive restaurant directory featuring dining guides for Knoxville, Chattanooga, Gatlinburg, Pigeon Forge, Sevierville, and the Smoky Mountains region.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Tennsational",
+        "url": "https://www.tennsational.com"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.tennsational.com/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Knoxville",
+          "containedIn": {
+            "@type": "State",
+            "name": "Tennessee"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Gatlinburg",
+          "containedIn": {
+            "@type": "State",
+            "name": "Tennessee"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Pigeon Forge",
+          "containedIn": {
+            "@type": "State",
+            "name": "Tennessee"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Chattanooga",
+          "containedIn": {
+            "@type": "State",
+            "name": "Tennessee"
+          }
+        },
+        {
+          "@type": "City",
+          "name": "Sevierville",
+          "containedIn": {
+            "@type": "State",
+            "name": "Tennessee"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- ============================================ -->
+    <!-- FONTS (Your existing code - don't change!) -->
+    <!-- ============================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   </head>
+  
   <body>
+    <!-- ============================================ -->
+    <!-- MESSAGE FOR USERS WITH JAVASCRIPT DISABLED -->
+    <!-- ============================================ -->
+    <noscript>
+      <div style="padding: 20px; text-align: center; background: #fff3cd; border: 2px solid #ffc107;">
+        <h1>East Tennessee Restaurant Directory - Tennsational</h1>
+        <p><strong>Please enable JavaScript to use this application.</strong></p>
+        <p>Discover the best restaurants in Knoxville, Gatlinburg, Pigeon Forge, Chattanooga, Sevierville, and throughout East Tennessee.</p>
+      </div>
+    </noscript>
+    
+    <!-- ============================================ -->
+    <!-- SEO CONTENT FOR SEARCH ENGINES -->
+    <!-- This text is hidden from users but visible to Google -->
+    <!-- It ensures search engines can read your content even before React loads -->
+    <!-- ============================================ -->
+    <div id="seo-content" style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">
+      <h1>East Tennessee Restaurant Directory - Tennsational</h1>
+      
+      <h2>Find the Best Restaurants in East Tennessee</h2>
+      <p>Welcome to Tennsational, your comprehensive guide to dining in East Tennessee. Whether you're searching for authentic Tennessee BBQ in Knoxville, farm-to-table cuisine in the Smoky Mountains, fine dining in Chattanooga, or family-friendly restaurants in Gatlinburg and Pigeon Forge, we've curated the region's best restaurants to help you find your next favorite meal.</p>
+      
+      <h3>Explore Restaurants by City</h3>
+      <ul>
+        <li><strong>Knoxville Restaurants</strong> - Downtown dining, Old City gems, Market Square favorites, and neighborhood spots throughout Knox County. Discover acclaimed restaurants, local BBQ joints, and everything in between.</li>
+        
+        <li><strong>Gatlinburg Restaurants</strong> - Gateway to the Great Smoky Mountains National Park. Mountain views paired with exceptional dining, from upscale steakhouses to authentic Southern cooking and pancake houses.</li>
+        
+        <li><strong>Pigeon Forge Restaurants</strong> - Family-friendly dining meets entertainment. From dinner shows to classic Southern buffets, Mexican restaurants, Italian eateries, and everything in between.</li>
+        
+        <li><strong>Chattanooga Restaurants</strong> - Riverside dining and a thriving food scene. Award-winning restaurants, craft breweries, rooftop bars, and innovative chefs making waves in Tennessee.</li>
+        
+        <li><strong>Sevierville Restaurants</strong> - The gateway to the Smokies offers diverse dining options from local favorites to national chains, BBQ spots to fine dining establishments.</li>
+        
+        <li><strong>Johnson City Restaurants</strong> - East Tennessee's hidden culinary gem with locally-owned restaurants, craft breweries, and Appalachian-inspired cuisine.</li>
+      </ul>
+      
+      <h3>Popular Restaurant Categories in East Tennessee</h3>
+      <ul>
+        <li><strong>Tennessee BBQ and Smokehouse</strong> - Slow-smoked perfection featuring pulled pork, ribs, brisket with signature East Tennessee sauces. Authentic pit BBQ and competition-winning recipes.</li>
+        
+        <li><strong>Fine Dining and Upscale Restaurants</strong> - Special occasion dining with James Beard Award-winning chefs, farm-to-table tasting menus, and sophisticated wine programs.</li>
+        
+        <li><strong>Farm-to-Table and Local Cuisine</strong> - Restaurants showcasing locally-sourced ingredients from Smoky Mountain farms and Tennessee producers. Modern Appalachian cuisine.</li>
+        
+        <li><strong>Family-Friendly Restaurants</strong> - Kid-approved dining with welcoming atmospheres, children's menus, and options that please everyone in the family.</li>
+        
+        <li><strong>Romantic Date Night Restaurants</strong> - Intimate settings perfect for anniversaries, proposals, and special evenings. Upscale ambiance with exceptional food and service.</li>
+        
+        <li><strong>Casual Dining and Cafes</strong> - Relaxed atmosphere for lunch meetings, quick dinners, or catching up with friends. Sandwiches, burgers, salads, and comfort food.</li>
+        
+        <li><strong>Breakfast and Brunch Spots</strong> - Start your day right with pancakes, biscuits and gravy, farm-fresh eggs, and Tennessee country ham.</li>
+        
+        <li><strong>Steakhouses</strong> - Premium aged beef, fresh seafood, and classic sides. Upscale dining with extensive wine cellars.</li>
+      </ul>
+      
+      <h3>East Tennessee Cuisine and Food Culture</h3>
+      <p>East Tennessee's food culture is deeply rooted in Appalachian traditions while embracing contemporary culinary trends. The region is famous for Tennessee-style BBQ, Southern comfort food, and modern Appalachian cuisine that reimagines traditional mountain recipes with contemporary techniques.</p>
+      
+      <p>From Knoxville's downtown food scene to the tourist destinations of Gatlinburg and Pigeon Forge, and the riverside restaurants of Chattanooga, East Tennessee offers incredible diversity. Local ingredients include Tennessee whiskey, Benton's bacon from Madisonville, Cruze Farm dairy products, and seasonal produce from area farms.</p>
+      
+      <p>Whether you're a local looking for your next favorite restaurant or a visitor planning your East Tennessee food adventure, Tennsational connects you with the best dining experiences our region has to offer. Explore restaurants by city, cuisine type, price range, or occasion. Read reviews, view menus, check hours, and find your perfect East Tennessee dining experience.</p>
+      
+      <h3>Why Tennsational?</h3>
+      <p>Tennsational is East Tennessee's most comprehensive restaurant directory, featuring hundreds of restaurants across Knoxville, Knox County, Sevier County (Gatlinburg, Pigeon Forge, Sevierville), Hamilton County (Chattanooga), and beyond. We help you discover everything from James Beard Award-winning fine dining to beloved local BBQ joints, hidden neighborhood gems to family-friendly chains.</p>
+      
+      <p>Start exploring today and discover why East Tennessee is quickly becoming one of the South's premier food destinations. Find restaurants open now, make reservations, view menus, read reviews, and plan your perfect meal in the Smoky Mountains and beyond.</p>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- REACT APP LOADS HERE -->
+    <!-- ============================================ -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
