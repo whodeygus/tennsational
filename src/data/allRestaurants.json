@@ -15857,7 +15857,7 @@
       "google_link": "https://www.google.com/maps/place/A%26W+Restaurant/data=!4m7!3m6!1s0x885bf9037de08145:0x39670c022b1d0f6a!8m2!3d35.8637371!4d-83.5447478!16s%2Fg%2F1tlwgc6w!19sChIJRYHgfQP5W4gRag8dKwIMZzk?authuser=0&hl=en&rclk=1",
       "featured_image": "https://lh3.googleusercontent.com/p/AF1QipOXzR9ppqTdgrGxkIdWpjWZLWl0XHWtX_2tODa8=s1024",
       "featured": false
-  ],
+    },
 {
       "id": 668,
       "name": "Pancake Pantry",
@@ -15877,7 +15877,7 @@
       "google_link": "",
       "featured_image": "",
       "featured": false
-  ],
+},
   "stats": {
     "restaurant_count": 620,
     "total_reviews": 741426,
