@@ -15858,7 +15858,7 @@
       "featured_image": "https://lh3.googleusercontent.com/p/AF1QipOXzR9ppqTdgrGxkIdWpjWZLWl0XHWtX_2tODa8=s1024",
       "featured": false
   ],
-{{
+{
       "id": 668,
       "name": "Pancake Pantry",
       "county": "Sevier County",
@@ -15877,7 +15877,6 @@
       "google_link": "",
       "featured_image": "",
       "featured": false
-    }
   ],
   "stats": {
     "restaurant_count": 620,
