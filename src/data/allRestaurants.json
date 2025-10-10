@@ -3804,7 +3804,7 @@
     {
       "id": 148,
       "name": "The Chop House",
-      "county": "Sevier County",
+      "county": "Jefferson County",
       "city": "Kodak",
       "cuisine": "Steakhouse",
       "price_range": "$$$",
@@ -4188,7 +4188,7 @@
     {
       "id": 163,
       "name": "Flapjack's Pancake Cabin",
-      "county": "Sevier County",
+      "county": "Jefferson County",
       "city": "Kodak",
       "cuisine": "American",
       "price_range": "$$",
@@ -4370,7 +4370,7 @@
     {
       "id": 170,
       "name": "Don Marco's Mexican",
-      "county": "Sevier County",
+      "county": "Jefferson County",
       "city": "Kodak",
       "cuisine": "Mexican",
       "price_range": "$$",
@@ -5279,7 +5279,7 @@
     {
       "id": 207,
       "name": "Cracker Barrel Old Country Store",
-      "county": "Sevier County",
+      "county": "Jefferson County",
       "city": "Kodak",
       "cuisine": "American",
       "price_range": "$$",
@@ -15857,27 +15857,7 @@
       "google_link": "https://www.google.com/maps/place/A%26W+Restaurant/data=!4m7!3m6!1s0x885bf9037de08145:0x39670c022b1d0f6a!8m2!3d35.8637371!4d-83.5447478!16s%2Fg%2F1tlwgc6w!19sChIJRYHgfQP5W4gRag8dKwIMZzk?authuser=0&hl=en&rclk=1",
       "featured_image": "https://lh3.googleusercontent.com/p/AF1QipOXzR9ppqTdgrGxkIdWpjWZLWl0XHWtX_2tODa8=s1024",
       "featured": false
-    },
-{
-      "id": 668,
-      "name": "Pancake Pantry",
-      "county": "Sevier County",
-      "city": "Gatlinburg",
-      "cuisine": "American",
-      "price_range": "$$",
-      "rating": 4.3,
-      "review_count": 5572,
-      "address": "628 Parkway, Gatlinburg, TN 37738",
-      "phone": "(865) 436-4724",
-      "website": "https://pancakepantry.com",
-      "hours": "7 AM-3 PM",
-      "description": "We offer twenty-four different varieties of pancakes, many waffles, farm fresh eggs, sizzling ham, bacon and more.",
-      "amenities": [],
-      "categories": "American",
-      "google_link": "",
-      "featured_image": "",
-      "featured": false
-}
+    }
   ],
   "stats": {
     "restaurant_count": 620,
