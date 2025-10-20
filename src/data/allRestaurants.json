@@ -15897,6 +15897,26 @@
       "google_link": "",
       "featured_image": "",
       "featured": false
+    },
+    {
+      "id": 670,
+      "name": "DosBros",
+      "county": "Sevier County",
+      "city": "Sevierville",
+      "cuisine": "Mexican",
+      "price_range": "$$",
+      "rating": 4.9,
+      "review_count": 34,
+      "address": "1304 Parkway #101 Sevierville, TN 37862",
+      "phone": "(865) 286-5977",
+      "website": "https://dosbros.com",
+      "hours": "10:45 AM-10:00 PM",
+      "description": "Ingredients Matter. EAT CLEAN.",
+      "amenities": [],
+      "categories": "Mexican",
+      "google_link": "",
+      "featured_image": "",
+      "featured": false
     }
   ],
   "stats": {
