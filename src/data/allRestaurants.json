@@ -15917,6 +15917,26 @@
       "google_link": "",
       "featured_image": "",
       "featured": false
+    },
+    {
+      "id": 671,
+      "name": "DosBros",
+      "county": "Knox County",
+      "city": "Knoxville",
+      "cuisine": "Mexican",
+      "price_range": "$$",
+      "rating": 4.4,
+      "review_count": 203,
+      "address": "4405 Kingston Pike, Knoxville, TN 37919",
+      "phone": "(865) 249-8396",
+      "website": "https://dosbros.com",
+      "hours": "10:45 AM-9:00 PM",
+      "description": "Ingredients Matter. EAT CLEAN.",
+      "amenities": [],
+      "categories": "Mexican",
+      "google_link": "",
+      "featured_image": "",
+      "featured": false
     }
   ],
   "stats": {
