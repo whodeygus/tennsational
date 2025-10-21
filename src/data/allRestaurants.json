@@ -15937,6 +15937,26 @@
       "google_link": "",
       "featured_image": "",
       "featured": false
+    },
+    {
+      "id": 672,
+      "name": "Chipotle Mexican Grill",
+      "county": "Sevier County",
+      "city": "Sevierville",
+      "cuisine": "Mexican",
+      "price_range": "$$",
+      "rating": 3.7,
+      "review_count": 1678,
+      "address": "1713 Parkway  Sevierville, TN 37862",
+      "phone": "(865) 428-2249",
+      "website": "https://chipotle.com",
+      "hours": "10:45 AM-11:00 PM",
+      "description": "Food with Integrity. Real Ingredients. Real Purpose. Real Flavor.",
+      "amenities": [],
+      "categories": "Mexican",
+      "google_link": "",
+      "featured_image": "",
+      "featured": false
     }
   ],
   "stats": {
