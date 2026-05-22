@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logoScript from '../assets/TENNsational logo without background.png;
+import logoScript from '../assets/TENNsational logo without background.png';
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,7 +20,7 @@ function Header() {
           </div>
           
           {/* Desktop Navigation - Hidden on mobile */}
-          <div style={{ display: 'none' }} className="desktop-nav" style={{ display: 'flex', alignItems: 'center' }}
+          <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center' }}>
             <Link to="/" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none', fontSize: '15px', marginLeft: '32px' }}>
               Home
             </Link>
