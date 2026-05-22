@@ -111,8 +111,7 @@ export default function RestaurantsPage() {
       const matchesSearch = searchTerm === '' || 
         restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        restaurant.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCounty = selectedCounty === 'All Counties' || restaurant.county === selectedCounty;
 const matchesCuisine = selectedCuisine === 'All Cuisines' || restaurant.cuisine === selectedCuisine;
