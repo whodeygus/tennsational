@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logoHero   from '../assets/tennsational_logo_hero.png';
+import logoHero   from '../assets/TENNsational logo without background.png';
 import logoNew    from '../assets/tennsational_logo_new.png';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import { getRestaurantStats } from '../data/restaurants';
