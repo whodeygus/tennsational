@@ -59,11 +59,22 @@ const PICKS = [
 ];
 
 const CATEGORIES = [
-  '🔥 Tennessee BBQ','🥩 Steakhouses','🌿 Farm-to-Table',
-  '🥞 Breakfast & Brunch','💑 Date Night','👨‍👩‍👧 Family Friendly',
-  '🍺 Craft Breweries','🌮 Mexican & Latin','🍣 Asian Cuisine',
-  '🎭 Dinner Shows','🌅 Waterfront Dining','⭐ Fine Dining',
-  '🥜 Southern Comfort','🍕 Pizza & Italian',
+  '🔥 BBQ',
+  '🥩 Steakhouse',
+  '🍔 Burgers',
+  '☕ Cafe',
+  '🥢 Chinese',
+  '🍟 Fast Food',
+  '🍛 Indian',
+  '🍝 Italian',
+  '🍱 Japanese',
+  '🥗 Mediterranean',
+  '🌮 Mexican',
+  '🍕 Pizza',
+  '🦞 Seafood',
+  '🍗 Southern',
+  '🍽️ American',
+  '🌶️ Thai',
 ];
 
 // ── Shared tiny helpers ──────────────────────────────────────
