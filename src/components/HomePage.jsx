@@ -191,7 +191,7 @@ export default function HomePage() {
           <img
             src={logoHero}
             alt="TENNsational — Explore. Taste. Discover."
-            style={{ width:'220px', height:'auto',
+            style={{ width:'320px', height:'auto',
               filter:'drop-shadow(0 10px 30px rgba(0,0,0,0.5)) drop-shadow(0 2px 8px rgba(200,100,26,0.25))' }}
           />
         </div>
