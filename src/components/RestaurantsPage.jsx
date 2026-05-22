@@ -115,9 +115,10 @@ export default function RestaurantsPage() {
         restaurant.description?.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCounty = selectedCounty === 'All Counties' || restaurant.county === selectedCounty;
-      const matchesCuisine = selectedCuisine === 'All Cuisines' || restaurant.cuisine === selectedCuisine;
-      
-      return matchesSearch && matchesCounty && matchesCuisine;
+const matchesCuisine = selectedCuisine === 'All Cuisines' || restaurant.cuisine === selectedCuisine;
+const matchesCity = cityFilter === '' || restaurant.city.toLowerCase() === cityFilter.toLowerCase();
+
+return matchesSearch && matchesCounty && matchesCuisine && matchesCity;
     });
   }, [restaurants, searchTerm, selectedCounty, selectedCuisine]);
 
