@@ -32,6 +32,7 @@ export default function RestaurantsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCounty, setSelectedCounty] = useState('All Counties');
   const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
+  const [cityFilter, setCityFilter] = useState('');
   
   // State for combined restaurant data
   const [restaurants, setRestaurants] = useState([]);
@@ -131,19 +132,16 @@ export default function RestaurantsPage() {
   // Read search/city/category filter passed from HomePage links
 useEffect(() => {
   const params = new URLSearchParams(location.search);
+  const cityParam  = params.get('city');
   const searchParam = params.get('search');
-  if (searchParam) {
+  if (cityParam) {
+    setCityFilter(cityParam);
+    setSearchTerm('');
+  } else if (searchParam) {
     setSearchTerm(searchParam);
+    setCityFilter('');
   }
 }, [location.search]);
-  // Handle clearing search results from URL state
-  useEffect(() => {
-    if (location.state?.clearSearch) {
-      setSearchTerm('');
-      setSelectedCounty('All Counties');
-      setSelectedCuisine('All Cuisines');
-    }
-  }, [location.state]);
 
   const formatPhoneNumber = (phone) => {
     if (!phone) return null;
