@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logoScript from '../assets/tennsational_logo_script.png';
+import logoScript from '../assets/TENNsational logo without background.png;
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
