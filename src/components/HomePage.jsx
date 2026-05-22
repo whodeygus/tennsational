@@ -106,7 +106,7 @@ export default function HomePage() {
   };
 
   const handleKeyPress    = (e) => { if (e.key === 'Enter') handleSearch(); };
-  const handleCityClick   = (city)     => navigate(`/restaurants?search=${encodeURIComponent(city)}`);
+  const handleCityClick = (city) => navigate(`/restaurants?city=${encodeURIComponent(city)}`);
   const handlePickClick   = (name)     => navigate(`/restaurants?search=${encodeURIComponent(name)}`);
   const handleCatClick    = (cat)      => navigate(`/restaurants?search=${encodeURIComponent(cat.replace(/^[^\s]+\s/,''))}`);
   const handleTagClick    = (tag)      => navigate(`/restaurants?search=${encodeURIComponent(tag.replace(/^[^\s]+\s/,''))}`);
