@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logoHero   from '../assets/tennsational_logo_hero.png';
 import logoNew    from '../assets/tennsational_logo_new.png';
@@ -110,6 +110,16 @@ export default function HomePage() {
   const handlePickClick   = (name)     => navigate(`/restaurants?search=${encodeURIComponent(name)}`);
   const handleCatClick    = (cat)      => navigate(`/restaurants?search=${encodeURIComponent(cat.replace(/^[^\s]+\s/,''))}`);
   const handleTagClick    = (tag)      => navigate(`/restaurants?search=${encodeURIComponent(tag.replace(/^[^\s]+\s/,''))}`);
+
+  // ── Scroll reveal ──────────────────────────────────────
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   // ── Newsletter (unchanged logic + endpoint) ─────────────
   const handleNewsletterChange = (field, value) =>
@@ -269,8 +279,8 @@ export default function HomePage() {
           { val:'Updated',  lbl:'Weekly by Locals' },
           { val:'Zero',     lbl:'Chain Sponsorships' },
           { val:'100%',     lbl:'East TN Independent' },
-        ].map(item => (
-          <div key={item.lbl} style={{ color:'rgba(247,240,227,0.58)', fontSize:'0.79rem',
+        ].map((item, i) => (
+          <div key={item.lbl} className={`reveal delay-${i+1}`} style={{ color:'rgba(247,240,227,0.58)', fontSize:'0.79rem',
             fontWeight:500, display:'flex', alignItems:'center', gap:'0.4rem' }}>
             <strong style={{ color:C.orangeLight, fontFamily:"'Cormorant Garamond',serif",
               fontSize:'1rem', fontWeight:700 }}>{item.val}</strong>
@@ -280,7 +290,7 @@ export default function HomePage() {
       </div>
 
       {/* ════ BROWSE BY CITY ════════════════════════════════ */}
-      <section style={{ padding:'5rem 2rem', maxWidth:'1200px', margin:'0 auto' }}>
+      <section className="reveal" style={{ padding:'5rem 2rem', maxWidth:'1200px', margin:'0 auto' }}>
         <SectionLabel>Explore the Region</SectionLabel>
         <SectionTitle>Browse by City</SectionTitle>
         <SectionSub>
@@ -290,8 +300,9 @@ export default function HomePage() {
 
         <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)',
           gridTemplateRows:'270px 270px', gap:'0.9rem' }}>
-          {CITIES.map(city => (
+          {CITIES.map((city, i) => (
             <div key={city.name}
+              className={`reveal delay-${(i % 4) + 1}`}
               onClick={() => handleCityClick(city.name)}
               style={{ gridColumn:`span ${city.span}`, borderRadius:14, position:'relative',
                 overflow:'hidden', cursor:'pointer', display:'flex',
@@ -329,7 +340,7 @@ export default function HomePage() {
       </section>
 
       {/* ════ EDITOR'S PICKS ════════════════════════════════ */}
-      <section style={{ background:C.parchment, borderTop:`1px solid rgba(200,100,26,0.14)`, borderBottom:`1px solid rgba(200,100,26,0.14)` }}>
+      <section className="reveal" style={{ background:C.parchment, borderTop:`1px solid rgba(200,100,26,0.14)`, borderBottom:`1px solid rgba(200,100,26,0.14)` }}>
         <div style={{ maxWidth:'1200px', margin:'0 auto', padding:'5rem 2rem' }}>
           <SectionLabel>Curated Weekly</SectionLabel>
           <SectionTitle>Editor's Picks</SectionTitle>
@@ -338,6 +349,7 @@ export default function HomePage() {
           <div style={{ display:'grid', gridTemplateColumns:'1.45fr 1fr 1fr', gap:'1.2rem' }}>
             {PICKS.map((pick, i) => (
               <div key={pick.name}
+                className={`reveal delay-${i+1}`}
                 onClick={() => handlePickClick(pick.name)}
                 style={{ background:'white', borderRadius:14, overflow:'hidden', cursor:'pointer',
                   border:'1px solid rgba(0,0,0,0.055)', transition:'box-shadow 0.3s,transform 0.3s' }}
@@ -367,7 +379,7 @@ export default function HomePage() {
       </section>
 
       {/* ════ BROWSE BY CATEGORY ════════════════════════════ */}
-      <section style={{ padding:'5rem 2rem', maxWidth:'1200px', margin:'0 auto' }}>
+      <section className="reveal" style={{ padding:'5rem 2rem', maxWidth:'1200px', margin:'0 auto' }}>
         <SectionLabel>Filter by Vibe</SectionLabel>
         <SectionTitle>Find Your Kind of Meal</SectionTitle>
         <SectionSub>Browse by what you're craving — or what the occasion calls for.</SectionSub>
@@ -389,11 +401,11 @@ export default function HomePage() {
       </section>
 
       {/* ════ ABOUT SECTION ═════════════════════════════════ */}
-      <section style={{ background:C.forest, padding:'6rem 2rem' }}>
+      <section className="reveal" style={{ background:C.forest, padding:'6rem 2rem' }}>
         <div style={{ maxWidth:'1200px', margin:'0 auto', display:'grid',
           gridTemplateColumns:'1fr 1fr', gap:'5rem', alignItems:'center' }}>
 
-          <div>
+          <div className="reveal">
             {/* Your real logo — cream badge pops beautifully on forest green */}
             <img src={logoNew} alt="TENNsational"
               style={{ width:'280px', height:'auto', marginBottom:'2rem', display:'block',
@@ -409,7 +421,7 @@ export default function HomePage() {
             </blockquote>
           </div>
 
-          <div>
+          <div className="reveal delay-2">
             <p style={{ color:'rgba(247,240,227,0.66)', fontSize:'0.96rem', lineHeight:1.8, margin:0 }}>
               TENNsational was built by a local, for locals — and for the visitors lucky enough to find
               their way to this corner of the South. We cover six counties, hundreds of restaurants,
