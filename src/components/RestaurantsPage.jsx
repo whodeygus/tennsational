@@ -128,6 +128,14 @@ export default function RestaurantsPage() {
     return filteredRestaurants.filter(restaurant => !restaurant.featured);
   }, [filteredRestaurants]);
 
+  // Read search/city/category filter passed from HomePage links
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const searchParam = params.get('search');
+  if (searchParam) {
+    setSearchTerm(searchParam);
+  }
+}, [location.search]);
   // Handle clearing search results from URL state
   useEffect(() => {
     if (location.state?.clearSearch) {
