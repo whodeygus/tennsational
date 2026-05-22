@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import logoScript from '../assets/tennsational_logo_script.png';
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -10,12 +11,16 @@ function Header() {
         <div className="flex justify-between items-center" style={{ height: '64px' }}>
           <div className="flex">
             <Link to="/" className="flex items-center" style={{ textDecoration: 'none' }}>
-              <span className="text-2xl font-bold text-primary">TENNsational</span>
+              <img
+  src={logoScript}
+  alt="TENNsational"
+  style={{ height: '42px', width: 'auto' }}
+/>
             </Link>
           </div>
           
           {/* Desktop Navigation - Hidden on mobile */}
-          <div style={{ display: 'none' }} className="desktop-nav">
+          <div style={{ display: 'none' }} className="desktop-nav" style={{ display: 'flex', alignItems: 'center' }}
             <Link to="/" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none', fontSize: '15px', marginLeft: '32px' }}>
               Home
             </Link>
@@ -31,12 +36,12 @@ function Header() {
           </div>
 
           {/* Mobile Menu Button - Hidden on desktop */}
-          <button 
-            className="mobile-menu-btn"
-            style={{ display: 'block' }}
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
+          <button
+  className="mobile-menu-btn md:hidden"
+  style={{ display: 'block' }}
+  onClick={() => setMenuOpen(!menuOpen)}
+  aria-label="Toggle menu"
+>
             <svg style={{ width: '24px', height: '24px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {menuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -48,7 +53,7 @@ function Header() {
         </div>
 
         {/* Mobile Navigation Menu */}
-        {menuOpen && (
+        {menuOpen && window.innerWidth < 768 && (
           <div style={{ paddingTop: '16px', paddingBottom: '16px', borderTop: '1px solid #f3f4f6' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <Link to="/" className="text-gray-700 hover:text-primary font-medium transition-colors" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
