@@ -269,7 +269,7 @@ export default function HomePage() {
 
         {/* Quick-filter tags */}
         <div style={{ position:'relative', zIndex:2, display:'flex', flexWrap:'wrap', gap:'0.5rem', justifyContent:'center' }}>
-          {['🔥 Best BBQ','🌄 Smoky Mountains','🥂 Fine Dining','🌅 Waterfront','🥞 Brunch','💑 Date Night','👨‍👩‍👧 Family Friendly'].map(tag => (
+          {['🔥 BBQ','🌮 Mexican','🍕 Pizza','🍝 Italian','🥩 Steakhouse','🍗 Southern','🍔 Burgers'].map(tag => (
             <button key={tag} onClick={() => handleTagClick(tag)}
               style={{ background:'rgba(255,255,255,0.07)', border:`1px solid rgba(200,100,26,0.3)`,
                 color:'rgba(247,240,227,0.72)', padding:'0.35rem 1rem',
