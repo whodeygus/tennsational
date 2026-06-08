@@ -26,9 +26,9 @@ const CITIES = [
   { name: 'Knoxville',     count: '200+', desc: 'Knox County',              span: 2, bg: 'linear-gradient(150deg,#0D2830 0%,#1C4A4A 50%,#2A5E56 100%)' },
   { name: 'Gatlinburg',    count: '90+',  desc: 'Gateway to the Smokies',   span: 1, bg: 'linear-gradient(150deg,#1A2E18 0%,#2E5028 50%,#3A6830 100%)' },
   { name: 'Pigeon Forge',  count: '80+',  desc: 'Family dining destination', span: 1, bg: 'linear-gradient(150deg,#2E1A0C 0%,#5A3418 50%,#744220 100%)' },
-  { name: 'Chattanooga',   count: '110+', desc: 'Riverside dining',          span: 2, bg: 'linear-gradient(150deg,#101828 0%,#1C3050 50%,#244068 100%)' },
+  { name: 'Chattanooga', count: '110+', desc: 'Riverside dining', span: 2, comingSoon: true, bg: 'linear-gradient(150deg,#101828 0%,#1C3050 50%,#244068 100%)' },
   { name: 'Sevierville',   count: '60+',  desc: 'Sevier County',             span: 1, bg: 'linear-gradient(150deg,#1C2C14 0%,#324C22 50%,#446030 100%)' },
-  { name: 'Johnson City',  count: '70+',  desc: 'The hidden culinary gem',   span: 1, bg: 'linear-gradient(150deg,#28141E 0%,#4A2438 50%,#603050 100%)' },
+  { name: 'Johnson City', count: '70+', desc: 'The hidden culinary gem', span: 1, comingSoon: true, bg: 'linear-gradient(150deg,#28141E 0%,#4A2438 50%,#603050 100%)' },
 ];
 
 const PICKS = [
@@ -314,9 +314,9 @@ export default function HomePage() {
           {CITIES.map((city, i) => (
             <div key={city.name}
               className={`reveal delay-${(i % 4) + 1}`}
-              onClick={() => handleCityClick(city.name)}
+              onClick={() => !city.comingSoon && handleCityClick(city.name)}
               style={{ gridColumn:`span ${city.span}`, borderRadius:14, position:'relative',
-                overflow:'hidden', cursor:'pointer', display:'flex',
+                overflow:'hidden', cursor: city.comingSoon ? 'default' : 'pointer', display:'flex',
                 alignItems:'flex-end', background:city.bg }}
               onMouseEnter={e => {
                 e.currentTarget.querySelector('.c-hover').style.opacity = '1';
@@ -342,7 +342,7 @@ export default function HomePage() {
                   {city.name}
                 </span>
                 <span style={{ fontSize:'0.74rem', fontWeight:500, color:'rgba(247,240,227,0.55)', display:'block' }}>
-                  {city.count} restaurants · {city.desc}
+                  {city.comingSoon ? '🔜 Coming Soon' : `${city.count} restaurants · ${city.desc}`}
                 </span>
               </div>
             </div>
