@@ -1,4 +1,4 @@
-# TENNsational Restaurant Directory
+# TENNsational Restaurant Directory 
 
 Your trusted guide to authentic local flavors and hidden gems across East Tennessee.
 
