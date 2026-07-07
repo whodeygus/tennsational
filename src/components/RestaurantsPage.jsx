@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Star, MapPin, Phone, Globe, Clock, DollarSign } from 'lucide-react';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import allRestaurantsData from '../data/allRestaurants.json';
+import { buildSlugMap, citySlug } from '../lib/seo.mjs';
 import '../App.css';
 
 // Simple star display component
@@ -105,6 +106,14 @@ export default function RestaurantsPage() {
     return allCuisines.sort();
   }, [restaurants]);
 
+  const { slugOf } = useMemo(() => buildSlugMap(restaurants), [restaurants]);
+
+  const cityLinks = useMemo(() => {
+    const counts = {};
+    restaurants.forEach(r => { if (r.city) counts[r.city] = (counts[r.city] || 0) + 1; });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  }, [restaurants]);
+
   // Filter restaurants based on search and filters
   const filteredRestaurants = useMemo(() => {
     return restaurants.filter(restaurant => {
@@ -162,7 +171,9 @@ useEffect(() => {
       <div className="p-4 h-full flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-semibold text-lg group-hover:text-blue-600 transition-colors line-clamp-2">
-            {restaurant.name}
+            <Link to={`/restaurant/${slugOf.get(restaurant.id)}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {restaurant.name}
+            </Link>
           </h3>
           {restaurant.isUserSubmitted && (
             <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full ml-2 flex-shrink-0">
@@ -240,6 +251,11 @@ useEffect(() => {
         
         {/* FIXED: Replaced broken buttons with working Call/Website buttons */}
         <div className="flex gap-2 mt-4 pt-4 border-t">
+          <Link to={`/restaurant/${slugOf.get(restaurant.id)}`} className="flex-1" style={{ textDecoration: 'none' }}>
+            <button className="w-full px-3 py-2 rounded text-sm transition-colors flex items-center justify-center gap-1" style={{ background: '#C8641A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+              Details
+            </button>
+          </Link>
           {restaurant.phone && (
             <a 
               href={`tel:${restaurant.phone}`} 
@@ -372,6 +388,21 @@ useEffect(() => {
           <div className="text-sm text-gray-600">
             Showing {filteredRestaurants.length} restaurants
           </div>
+
+          {cityLinks.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', color: '#6b7280', fontWeight: 600 }}>Browse by city:</span>
+              {cityLinks.map(([city, count]) => (
+                <Link
+                  key={city}
+                  to={`/city/${citySlug(city)}`}
+                  style={{ fontSize: '0.82rem', color: '#1A3550', background: '#F7F0E3', padding: '4px 12px', borderRadius: '999px', textDecoration: 'none', fontWeight: 600 }}
+                >
+                  {city} ({count})
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Featured Restaurants */}
