@@ -1,1 +1,53 @@
+{
+  "_HOW_TO_USE": "To cover a new city: add it to the 'cities' list below (format: 'City, TN'), commit this file, then go to the Actions tab -> 'Refresh Restaurants' -> 'Run workflow'. That's the entire process. The monthly scheduled run will include it automatically from then on. For large cities, add extra searches under 'extraQueries' to get past Google's 60-results-per-search cap.",
+
+  "cities": [
+    "Knoxville, TN",
+    "Morristown, TN",
+    "Sevierville, TN",
+    "Maryville, TN",
+    "Newport, TN",
+    "Dandridge, TN",
+    "Jefferson City, TN",
+    "Alcoa, TN",
+    "Pigeon Forge, TN",
+    "Gatlinburg, TN",
+    "White Pine, TN",
+    "Cosby, TN",
+    "Townsend, TN",
+    "Powell, TN",
+    "Halls, TN",
+    "Strawberry Plains, TN",
+    "Kodak, TN",
+    "Seymour, TN",
+    "Talbott, TN",
+    "Russellville, TN",
+    "Whitesburg, TN",
+    "Baneberry, TN",
+    "New Market, TN",
+    "Parrottsville, TN",
+    "Del Rio, TN",
+    "Hartford, TN",
+    "Wears Valley, TN",
+    "Johnson City, TN"
+  ],
+
+  "extraQueries": {
+    "Knoxville, TN": [
+      "BBQ restaurants in Knoxville TN",
+      "Mexican restaurants in Knoxville TN",
+      "pizza restaurants in Knoxville TN",
+      "breakfast restaurants in Knoxville TN"
+    ],
+    "Johnson City, TN": [
+      "Mexican restaurants in Johnson City TN",
+      "BBQ restaurants in Johnson City TN"
+    ]
+  },
+
+  "maxNewPerRun": 30,
+  "maxDetailCallsPerRun": 60,
+  "checkClosures": true,
+  "minUserRatings": 5
+}
 
