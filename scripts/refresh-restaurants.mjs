@@ -192,9 +192,20 @@ async function main() {
 
   const report = { added: [], closed: [], skipped: 0, errors: [] };
 
+  // Optional: focus an entire run on one city (Actions "Run workflow" input).
+  const onlyCity = (process.env.ONLY_CITY || '').trim().toLowerCase();
+  const cityList = onlyCity
+    ? CONFIG.cities.filter((c) => c.toLowerCase().includes(onlyCity))
+    : CONFIG.cities;
+  if (onlyCity && !cityList.length) {
+    console.error(`ONLY_CITY "${process.env.ONLY_CITY}" matches nothing in refresh-config.json — add the city there first.`);
+    process.exit(1);
+  }
+  if (onlyCity) console.log(`Single-city mode: ${cityList.join(', ')}`);
+
   // ---- 1. discovery ----
   const discovered = new Map(); // placeId -> { name, cityFallback }
-  for (const city of CONFIG.cities) {
+  for (const city of cityList) {
     const queries = [`restaurants in ${city}`, ...(CONFIG.extraQueries?.[city] || [])];
     for (const q of queries) {
       try {
@@ -220,8 +231,28 @@ async function main() {
   console.log(`Discovered ${discovered.size} candidate new restaurants (${searchCalls} search calls)`);
 
   // ---- 2. fetch details for new places, capped ----
+  // Round-robin across cities so no single city's backlog starves the others:
+  // deal one candidate per city in rotation until the cap is reached.
   let nextId = Math.max(...restaurants.map((r) => r.id)) + 1;
-  const candidates = [...discovered.entries()].slice(0, Math.min(CONFIG.maxNewPerRun, CONFIG.maxDetailCallsPerRun));
+  const byCity = new Map();
+  for (const [placeId, meta] of discovered) {
+    if (!byCity.has(meta.cityFallback)) byCity.set(meta.cityFallback, []);
+    byCity.get(meta.cityFallback).push([placeId, meta]);
+  }
+  const cap = Math.min(CONFIG.maxNewPerRun, CONFIG.maxDetailCallsPerRun);
+  const candidates = [];
+  const buckets = [...byCity.values()];
+  for (let round = 0; candidates.length < cap; round++) {
+    let dealt = false;
+    for (const bucket of buckets) {
+      if (bucket[round]) {
+        candidates.push(bucket[round]);
+        dealt = true;
+        if (candidates.length >= cap) break;
+      }
+    }
+    if (!dealt) break; // every bucket exhausted
+  }
   for (const [placeId, meta] of candidates) {
     try {
       const details = await placeDetails(placeId);
