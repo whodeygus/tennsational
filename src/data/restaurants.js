@@ -26,7 +26,7 @@ export const searchRestaurants = (query) => {
 };
 
 export const getUniqueCounties = () => {
-  const counties = [...new Set(restaurants.map(r => r.county))];
+  const counties = [...new Set(restaurants.map(r => r.county).filter(Boolean))];
   return counties.sort();
 };
 
