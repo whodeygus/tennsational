@@ -1,4 +1,4 @@
-import restaurantData from '../assets/allRestaurants.json';
+import restaurantData from './allRestaurants.json';
 
 // Extract restaurants array from the JSON structure
 export const restaurants = restaurantData.restaurants || restaurantData;
@@ -48,4 +48,3 @@ export const getRestaurantStats = () => {
     avgRating: Math.round(avgRating * 10) / 10
   };
 };
-
