@@ -172,6 +172,11 @@ for (const p of staticPages) {
 }
 console.log(`✓ ${staticPages.length} static pages`);
 
+// ---------- public data endpoint (used by the mobile app) ----------
+fs.mkdirSync(path.join(DIST, 'data'), { recursive: true });
+fs.copyFileSync(path.join(ROOT, 'src/data/allRestaurants.json'), path.join(DIST, 'data', 'restaurants.json'));
+console.log('✓ data endpoint: /data/restaurants.json');
+
 // ---------- sitemap ----------
 const today = new Date().toISOString().slice(0, 10);
 const urls = [
