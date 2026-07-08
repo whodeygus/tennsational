@@ -1,0 +1,39 @@
+name: Refresh Restaurants
+
+on:
+  schedule:
+    # 1st of every month at 6:00 AM Eastern (10:00 UTC)
+    - cron: '0 10 1 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run restaurant refresh
+        env:
+          GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+        run: node scripts/refresh-restaurants.mjs
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "tennsational-bot"
+          git config user.email "actions@github.com"
+          git add src/data/allRestaurants.json src/data/closedRestaurants.json || true
+          if git diff --cached --quiet; then
+            echo "No changes this run."
+          else
+            git commit -m "🤖 Restaurant refresh: new listings + closure sweep"
+            git push
+          fi
