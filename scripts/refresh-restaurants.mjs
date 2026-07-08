@@ -59,7 +59,7 @@ async function placesSearchText(query, pageToken) {
 const DETAIL_MASK = [
   'id', 'displayName', 'formattedAddress', 'addressComponents', 'location',
   'nationalPhoneNumber', 'websiteUri', 'googleMapsUri', 'businessStatus',
-  'rating', 'userRatingCount', 'priceLevel', 'primaryTypeDisplayName',
+  'rating', 'userRatingCount', 'priceLevel', 'primaryTypeDisplayName', 'photos',
   'regularOpeningHours.weekdayDescriptions', 'editorialSummary',
 ].join(',');
 
@@ -71,6 +71,23 @@ async function placeDetails(placeId, fieldMask = DETAIL_MASK) {
   });
   if (!res.ok) throw new Error(`placeDetails ${res.status}: ${await res.text()}`);
   return res.json();
+}
+
+let photoCalls = 0;
+async function resolvePhotoUrl(details) {
+  const photoName = details.photos?.[0]?.name;
+  if (!photoName) return '';
+  if (MOCK) return 'https://lh3.googleusercontent.com/p/MOCK_PHOTO=s1024';
+  try {
+    photoCalls++;
+    const res = await fetch(
+      `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=1024&skipHttpRedirect=true`,
+      { headers: { 'X-Goog-Api-Key': API_KEY } },
+    );
+    if (!res.ok) return '';
+    const j = await res.json();
+    return j.photoUri || '';
+  } catch { return ''; }
 }
 
 // ---------------- mapping to TENNsational schema ----------------
@@ -176,6 +193,7 @@ function mockDetails(placeId) {
       priceLevel: 'PRICE_LEVEL_MODERATE',
       primaryTypeDisplayName: { text: 'Mexican restaurant', languageCode: 'en' },
       regularOpeningHours: { weekdayDescriptions: ['Monday: 11:00 AM – 9:00 PM'] },
+      photos: [{ name: 'places/MOCK_NEW_1/photos/abc123' }],
       editorialSummary: { text: 'Family-run taqueria known for street tacos and homemade salsas.' },
     };
   }
@@ -259,6 +277,7 @@ async function main() {
       if (details.businessStatus && details.businessStatus !== 'OPERATIONAL') continue;
       if ((details.userRatingCount || 0) < (CONFIG.minUserRatings ?? 0)) { report.skipped++; continue; }
       const r = toRestaurant(details, nextId++, meta.cityFallback, knownCuisines);
+      r.featured_image = await resolvePhotoUrl(details);
       restaurants.push(r);
       knownIds.add(placeId);
       report.added.push(`${r.name} — ${r.city} (${r.cuisine}, ★${r.rating})`);
@@ -266,6 +285,21 @@ async function main() {
     } catch (e) {
       report.errors.push(`details ${meta.name}: ${e.message}`);
     }
+  }
+
+  // ---- 2b. photo backfill for previously added entries with no image ----
+  if (!MOCK) {
+    const needPhoto = restaurants.filter((r) => r.place_id && !r.featured_image && r.added_by_refresh).slice(0, 40);
+    let healed = 0;
+    for (const r of needPhoto) {
+      try {
+        const d = await placeDetails(r.place_id, 'id,photos');
+        const url = await resolvePhotoUrl(d);
+        if (url) { r.featured_image = url; healed++; }
+        await sleep(80);
+      } catch { /* try again next run */ }
+    }
+    if (healed) report.added.push(`(photo backfill: added images to ${healed} existing listings)`);
   }
 
   // ---- 3. closure sweep over existing listings ----
@@ -309,7 +343,7 @@ async function main() {
   // ---- 5. report (shows in the GitHub Actions summary) ----
   const lines = [
     `## Restaurant refresh — ${new Date().toISOString().slice(0, 10)}`,
-    `**API usage:** ${searchCalls} searches, ${detailCalls} detail calls`,
+    `**API usage:** ${searchCalls} searches, ${detailCalls} detail calls, ${photoCalls} photo lookups`,
     ``,
     `### Added (${report.added.length})`,
     ...(report.added.length ? report.added.map((s) => `- ${s}`) : ['_none_']),
