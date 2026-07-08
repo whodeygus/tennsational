@@ -81,10 +81,19 @@ const PRICE_MAP = {
   PRICE_LEVEL_VERY_EXPENSIVE: '$$$$',
 };
 
+function typeText(primaryTypeDisplayName) {
+  // Places API (New) returns LocalizedText: { text, languageCode }
+  if (!primaryTypeDisplayName) return '';
+  return typeof primaryTypeDisplayName === 'string'
+    ? primaryTypeDisplayName
+    : (primaryTypeDisplayName.text || '');
+}
+
 function deriveCuisine(primaryTypeDisplayName, knownCuisines) {
-  if (!primaryTypeDisplayName) return 'American';
-  let c = primaryTypeDisplayName.replace(/\s*restaurant\s*$/i, '').trim();
-  if (!c || /^restaurant$/i.test(primaryTypeDisplayName)) c = 'American';
+  const t = typeText(primaryTypeDisplayName);
+  if (!t) return 'American';
+  let c = t.replace(/\s*restaurant\s*$/i, '').trim();
+  if (!c || /^restaurant$/i.test(t)) c = 'American';
   const aliases = {
     'Barbecue': 'BBQ', 'Bar & grill': 'American', 'Hamburger': 'Burgers',
     'Fast food': 'Fast Food', 'Coffee shop': 'Cafe', 'Sandwich shop': 'American',
@@ -126,9 +135,9 @@ function toRestaurant(details, id, cityFallback, knownCuisines) {
     website: details.websiteUri || '',
     hours: extractHours(details),
     description: details.editorialSummary?.text
-      || `${details.displayName?.text} is a ${(details.primaryTypeDisplayName || 'restaurant').toLowerCase()} in ${city}, Tennessee.`,
+      || `${details.displayName?.text} is a ${(typeText(details.primaryTypeDisplayName) || 'restaurant').toLowerCase()} in ${city}, Tennessee.`,
     amenities: [],
-    categories: details.primaryTypeDisplayName || 'Restaurant',
+    categories: typeText(details.primaryTypeDisplayName) || 'Restaurant',
     google_link: details.googleMapsUri || '',
     featured_image: '', // owner/editor photos preferred; detail page falls back gracefully
     featured: false,
@@ -165,7 +174,7 @@ function mockDetails(placeId) {
       businessStatus: 'OPERATIONAL',
       rating: 4.7, userRatingCount: 212,
       priceLevel: 'PRICE_LEVEL_MODERATE',
-      primaryTypeDisplayName: 'Mexican restaurant',
+      primaryTypeDisplayName: { text: 'Mexican restaurant', languageCode: 'en' },
       regularOpeningHours: { weekdayDescriptions: ['Monday: 11:00 AM – 9:00 PM'] },
       editorialSummary: { text: 'Family-run taqueria known for street tacos and homemade salsas.' },
     };
@@ -284,4 +293,3 @@ async function main() {
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
-
