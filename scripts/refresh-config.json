@@ -46,8 +46,8 @@
     ]
   },
 
-  "maxNewPerRun": 30,
-  "maxDetailCallsPerRun": 60,
+  "maxNewPerRun": 60,
+  "maxDetailCallsPerRun": 90,
   "checkClosures": true,
   "minUserRatings": 5
 }
