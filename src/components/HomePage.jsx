@@ -4,6 +4,8 @@ import logoHero   from '../assets/TENNsational logo without background.png';
 import logoNew    from '../assets/tennsational_logo_new.png';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import { getRestaurantStats } from '../data/restaurants';
+import allRestaurantsData from '../data/allRestaurants.json';
+import { citySlug } from '../lib/seo.mjs';
 import '../App.css';
 
 // ── Brand colour tokens ──────────────────────────────────────
@@ -22,14 +24,28 @@ const C = {
 };
 
 // ── Static page data ─────────────────────────────────────────
-const CITIES = [
-  { name: 'Knoxville',     count: '200+', desc: 'Knox County',              span: 2, bg: 'linear-gradient(150deg,#0D2830 0%,#1C4A4A 50%,#2A5E56 100%)' },
-  { name: 'Gatlinburg',    count: '90+',  desc: 'Gateway to the Smokies',   span: 1, bg: 'linear-gradient(150deg,#1A2E18 0%,#2E5028 50%,#3A6830 100%)' },
-  { name: 'Pigeon Forge',  count: '80+',  desc: 'Family dining destination', span: 1, bg: 'linear-gradient(150deg,#2E1A0C 0%,#5A3418 50%,#744220 100%)' },
-  { name: 'Chattanooga', count: '110+', desc: 'Riverside dining', span: 2, comingSoon: true, bg: 'linear-gradient(150deg,#101828 0%,#1C3050 50%,#244068 100%)' },
-  { name: 'Sevierville',   count: '60+',  desc: 'Sevier County',             span: 1, bg: 'linear-gradient(150deg,#1C2C14 0%,#324C22 50%,#446030 100%)' },
-  { name: 'Johnson City', count: '70+', desc: 'The hidden culinary gem', span: 1, comingSoon: true, bg: 'linear-gradient(150deg,#28141E 0%,#4A2438 50%,#603050 100%)' },
+// Design metadata only — counts and "coming soon" status are computed from
+// the live database below. When the refresh workflow adds restaurants for a
+// "coming soon" city, its card activates automatically. No code edit needed.
+const CITY_CARDS = [
+  { name: 'Knoxville',    desc: 'Knox County',               span: 2, bg: 'linear-gradient(150deg,#0D2830 0%,#1C4A4A 50%,#2A5E56 100%)' },
+  { name: 'Gatlinburg',   desc: 'Gateway to the Smokies',    span: 1, bg: 'linear-gradient(150deg,#1A2E18 0%,#2E5028 50%,#3A6830 100%)' },
+  { name: 'Pigeon Forge', desc: 'Family dining destination', span: 1, bg: 'linear-gradient(150deg,#2E1A0C 0%,#5A3418 50%,#744220 100%)' },
+  { name: 'Chattanooga',  desc: 'Riverside dining',          span: 2, bg: 'linear-gradient(150deg,#101828 0%,#1C3050 50%,#244068 100%)' },
+  { name: 'Sevierville',  desc: 'Sevier County',             span: 1, bg: 'linear-gradient(150deg,#1C2C14 0%,#324C22 50%,#446030 100%)' },
+  { name: 'Johnson City', desc: 'The hidden culinary gem',   span: 1, bg: 'linear-gradient(150deg,#28141E 0%,#4A2438 50%,#603050 100%)' },
 ];
+
+const cityCountMap = {};
+allRestaurantsData.restaurants.forEach((r) => {
+  if (r.city) cityCountMap[r.city] = (cityCountMap[r.city] || 0) + 1;
+});
+
+const CITIES = CITY_CARDS.map((c) => ({
+  ...c,
+  count: cityCountMap[c.name] || 0,
+  comingSoon: !(cityCountMap[c.name] > 0),
+}));
 
 const PICKS = [
   {
@@ -117,7 +133,7 @@ export default function HomePage() {
   };
 
   const handleKeyPress    = (e) => { if (e.key === 'Enter') handleSearch(); };
-  const handleCityClick = (city) => navigate(`/restaurants?city=${encodeURIComponent(city)}`);
+  const handleCityClick = (city) => navigate(`/city/${citySlug(city)}`);
   const handlePickClick   = (name)     => navigate(`/restaurants?search=${encodeURIComponent(name)}`);
   const handleCatClick    = (cat)      => navigate(`/restaurants?search=${encodeURIComponent(cat.replace(/^[^\s]+\s/,''))}`);
   const handleTagClick    = (tag)      => navigate(`/restaurants?search=${encodeURIComponent(tag.replace(/^[^\s]+\s/,''))}`);
@@ -255,7 +271,7 @@ export default function HomePage() {
                 background:'white', minWidth:'130px', cursor:'pointer' }}
             >
               <option>All Cities</option>
-              {CITIES.map(c => <option key={c.name}>{c.name}</option>)}
+              {CITIES.filter(c => !c.comingSoon).map(c => <option key={c.name}>{c.name}</option>)}
             </select>
             <button onClick={handleSearch}
               style={{ background:C.orange, border:'none', padding:'0 1.75rem',
@@ -579,7 +595,7 @@ export default function HomePage() {
                 Explore Cities
               </h4>
               <div style={{ display:'flex', flexDirection:'column', gap:'0.55rem' }}>
-                {CITIES.map(city => (
+                {CITIES.filter(city => !city.comingSoon).map(city => (
                   <button key={city.name} onClick={() => handleCityClick(city.name)}
                     style={{ background:'none', border:'none', padding:0,
                       color:'rgba(247,240,227,0.4)', fontSize:'0.86rem',
