@@ -4,7 +4,12 @@ on:
   schedule:
     # 1st of every month at 6:00 AM Eastern (10:00 UTC)
     - cron: '0 10 1 * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      city:
+        description: 'Optional: focus this run on ONE city (e.g. "Bristol, TN"). Leave blank to run all cities.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -19,11 +24,12 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Run restaurant refresh
         env:
           GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+          ONLY_CITY: ${{ github.event.inputs.city }}
         run: node scripts/refresh-restaurants.mjs
 
       - name: Commit and push changes
