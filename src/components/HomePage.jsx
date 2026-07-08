@@ -302,7 +302,7 @@ export default function HomePage() {
         padding:'1rem 2rem', display:'flex', justifyContent:'center', gap:'3rem', flexWrap:'wrap' }}>
         {[
           { val:`${stats.totalRestaurants}+`, lbl:'Restaurants Listed' },
-          { val:'6',        lbl:'Counties Covered' },
+          { val:`${stats.totalCounties}`, lbl:'Counties Covered' },
           { val:'Updated',  lbl:'Weekly by Locals' },
           { val:'Zero',     lbl:'Chain Sponsorships' },
           { val:'100%',     lbl:'East TN Independent' },
@@ -451,7 +451,7 @@ export default function HomePage() {
           <div className="reveal delay-2">
             <p style={{ color:'rgba(247,240,227,0.66)', fontSize:'0.96rem', lineHeight:1.8, margin:0 }}>
               TENNsational was built by a local, for locals — and for the visitors lucky enough to find
-              their way to this corner of the South. We cover six counties, hundreds of restaurants,
+              their way to this corner of the South. We cover {stats.totalCounties} counties, hundreds of restaurants,
               and zero chain sponsorships.
             </p>
             <div style={{ width:44, height:2, background:C.orange, margin:'1.75rem 0' }} />
@@ -463,7 +463,7 @@ export default function HomePage() {
             <div style={{ display:'flex', gap:'2.5rem', marginTop:'2rem' }}>
               {[
                 { val:`${stats.totalRestaurants}+`, lbl:'Restaurants' },
-                { val:'6',    lbl:'Counties' },
+                { val:`${stats.totalCounties}`, lbl:'Counties' },
                 { val:'100%', lbl:'Independent' },
               ].map(s => (
                 <div key={s.lbl}>
