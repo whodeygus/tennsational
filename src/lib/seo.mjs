@@ -52,7 +52,7 @@ export function restaurantTitle(r) {
 }
 
 export function cityTitle(city, count) {
-  return `${count} Restaurants in ${city}, TN — Local Dining Guide | TENNsational`;
+  return `${count} Restaurant${count === 1 ? '' : 's'} in ${city}, TN — Local Dining Guide | TENNsational`;
 }
 
 export function cityMetaDescription(city, count, topCuisines) {
