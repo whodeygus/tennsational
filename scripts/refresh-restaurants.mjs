@@ -59,7 +59,7 @@ async function placesSearchText(query, pageToken) {
 const DETAIL_MASK = [
   'id', 'displayName', 'formattedAddress', 'addressComponents', 'location',
   'nationalPhoneNumber', 'websiteUri', 'googleMapsUri', 'businessStatus',
-  'rating', 'userRatingCount', 'priceLevel', 'primaryTypeDisplayName', 'photos',
+  'rating', 'userRatingCount', 'priceLevel', 'primaryTypeDisplayName', 'types', 'photos',
   'regularOpeningHours.weekdayDescriptions', 'editorialSummary',
 ].join(',');
 
@@ -106,19 +106,59 @@ function typeText(primaryTypeDisplayName) {
     : (primaryTypeDisplayName.text || '');
 }
 
-function deriveCuisine(primaryTypeDisplayName, knownCuisines) {
-  const t = typeText(primaryTypeDisplayName);
-  if (!t) return 'American';
-  let c = t.replace(/\s*restaurant\s*$/i, '').trim();
-  if (!c || /^restaurant$/i.test(t)) c = 'American';
-  const aliases = {
-    'Barbecue': 'BBQ', 'Bar & grill': 'American', 'Hamburger': 'Burgers',
-    'Fast food': 'Fast Food', 'Coffee shop': 'Cafe', 'Sandwich shop': 'American',
-    'Breakfast': 'American', 'Diner': 'American', 'Takeout': 'American',
-    'Chicken': 'American', 'Ice cream shop': 'Cafe', 'Steak house': 'Steakhouse',
-  };
-  c = aliases[c] || c;
-  // Prefer an existing cuisine label if it matches, to keep filters tidy
+// Machine-readable Google place types -> TENNsational cuisine labels.
+const TYPE_CUISINE = {
+  mexican_restaurant: 'Mexican', tex_mex_restaurant: 'Mexican',
+  italian_restaurant: 'Italian', pizza_restaurant: 'Pizza',
+  chinese_restaurant: 'Chinese', japanese_restaurant: 'Japanese',
+  sushi_restaurant: 'Japanese', ramen_restaurant: 'Japanese',
+  thai_restaurant: 'Thai', vietnamese_restaurant: 'Vietnamese',
+  korean_restaurant: 'Korean', asian_restaurant: 'Asian',
+  indian_restaurant: 'Indian', greek_restaurant: 'Mediterranean',
+  mediterranean_restaurant: 'Mediterranean', middle_eastern_restaurant: 'Mediterranean',
+  lebanese_restaurant: 'Mediterranean', turkish_restaurant: 'Mediterranean',
+  french_restaurant: 'French', spanish_restaurant: 'Mediterranean',
+  barbecue_restaurant: 'BBQ', steak_house: 'Steakhouse',
+  seafood_restaurant: 'Seafood', hamburger_restaurant: 'Burgers',
+  fast_food_restaurant: 'Fast Food', sandwich_shop: 'American',
+  breakfast_restaurant: 'American', brunch_restaurant: 'Cafe',
+  cafe: 'Cafe', coffee_shop: 'Cafe', bakery: 'Cafe', ice_cream_shop: 'Cafe',
+  american_restaurant: 'American', bar_and_grill: 'American',
+  sports_bar: 'American', pub: 'American', bar: 'American',
+  diner: 'American', southern_restaurant: 'Southern',
+  latin_american_restaurant: 'Latin American', german_restaurant: 'German',
+};
+
+// Display-name aliases (checked case-insensitively, parentheticals stripped).
+const NAME_CUISINE = {
+  'barbecue': 'BBQ', 'bar & grill': 'American', 'bar and grill': 'American',
+  'bar': 'American', 'pub': 'American', 'irish pub': 'American',
+  'sports bar': 'American', 'gastropub': 'American', 'bistro': 'American',
+  'hamburger': 'Burgers', 'burger': 'Burgers', 'fast food': 'Fast Food',
+  'coffee shop': 'Cafe', 'coffee': 'Cafe', 'bakery': 'Cafe',
+  'ice cream shop': 'Cafe', 'brunch': 'Cafe', 'breakfast': 'American',
+  'sandwich shop': 'American', 'diner': 'American', 'takeout': 'American',
+  'chicken': 'American', 'chicken wings': 'American', 'taco': 'Mexican',
+  'taqueria': 'Mexican', 'tex-mex': 'Mexican', 'southwestern': 'Mexican',
+  'steak house': 'Steakhouse', 'steak': 'Steakhouse', 'sushi': 'Japanese',
+  'ramen': 'Japanese', 'fusion': 'Asian', 'greek': 'Mediterranean',
+};
+
+function deriveCuisine(details, knownCuisines) {
+  // Layer 1: machine types (most reliable)
+  for (const t of details.types || []) {
+    if (TYPE_CUISINE[t]) return TYPE_CUISINE[t];
+  }
+  // Layer 2: display name, normalized
+  const raw = typeText(details.primaryTypeDisplayName);
+  let c = raw
+    .replace(/\([^)]*\)/g, '')          // strip "(US)" etc.
+    .replace(/\s*restaurant\s*$/i, '')  // strip trailing "restaurant"
+    .trim();
+  if (!c || /^restaurant$/i.test(raw)) c = 'American';
+  const aliased = NAME_CUISINE[c.toLowerCase()];
+  if (aliased) return aliased;
+  // Layer 3: prefer an existing cuisine label if it matches, to keep filters tidy
   const hit = knownCuisines.find((k) => norm(k) === norm(c));
   return hit || c;
 }
@@ -143,7 +183,7 @@ function toRestaurant(details, id, cityFallback, knownCuisines) {
     name: details.displayName?.text || 'Unknown',
     county: county || '',
     city,
-    cuisine: deriveCuisine(details.primaryTypeDisplayName, knownCuisines),
+    cuisine: deriveCuisine(details, knownCuisines),
     price_range: PRICE_MAP[details.priceLevel] || '$$',
     rating: details.rating || 0,
     review_count: details.userRatingCount || 0,
@@ -191,7 +231,8 @@ function mockDetails(placeId) {
       businessStatus: 'OPERATIONAL',
       rating: 4.7, userRatingCount: 212,
       priceLevel: 'PRICE_LEVEL_MODERATE',
-      primaryTypeDisplayName: { text: 'Mexican restaurant', languageCode: 'en' },
+      primaryTypeDisplayName: { text: 'Taco restaurant', languageCode: 'en' },
+      types: ['mexican_restaurant', 'restaurant', 'food'],
       regularOpeningHours: { weekdayDescriptions: ['Monday: 11:00 AM – 9:00 PM'] },
       photos: [{ name: 'places/MOCK_NEW_1/photos/abc123' }],
       editorialSummary: { text: 'Family-run taqueria known for street tacos and homemade salsas.' },
@@ -285,6 +326,17 @@ async function main() {
     } catch (e) {
       report.errors.push(`details ${meta.name}: ${e.message}`);
     }
+  }
+
+  // ---- 2a. cuisine cleanup for previously added entries (no API cost) ----
+  {
+    let relabeled = 0;
+    for (const r of restaurants) {
+      if (!r.added_by_refresh || !r.categories) continue;
+      const better = deriveCuisine({ types: [], primaryTypeDisplayName: r.categories }, knownCuisines);
+      if (better && better !== r.cuisine) { r.cuisine = better; relabeled++; }
+    }
+    if (relabeled) report.added.push(`(cuisine cleanup: relabeled ${relabeled} existing listings)`);
   }
 
   // ---- 2b. photo backfill for previously added entries with no image ----
