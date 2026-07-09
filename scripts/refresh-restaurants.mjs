@@ -91,6 +91,19 @@ async function resolvePhotoUrl(details) {
 }
 
 // ---------------- mapping to TENNsational schema ----------------
+// Geographic fence: East Tennessee (keeps Chattanooga and the Tri-Cities,
+// rejects Google's fuzzy matches in Middle/West TN and other states'
+// same-named towns — Johnson City TX, New Market VA, Jefferson City MO...)
+const BOUNDS = { latMin: 34.9, latMax: 36.75, lngMin: -85.6, lngMax: -81.5 };
+const inRegion = (lat, lng) =>
+  lat != null && lng != null &&
+  lat >= BOUNDS.latMin && lat <= BOUNDS.latMax &&
+  lng >= BOUNDS.lngMin && lng <= BOUNDS.lngMax;
+
+// Business types that are not restaurants, even when Google returns them
+const BLOCKED_TYPES = ['convenience_store', 'gas_station', 'grocery_store', 'supermarket', 'liquor_store'];
+const BLOCKED_CATEGORY_WORDS = ['convenience', 'gas station', 'grocery', 'supermarket', 'liquor'];
+
 const PRICE_MAP = {
   PRICE_LEVEL_INEXPENSIVE: '$',
   PRICE_LEVEL_MODERATE: '$$',
@@ -142,6 +155,8 @@ const NAME_CUISINE = {
   'taqueria': 'Mexican', 'tex-mex': 'Mexican', 'southwestern': 'Mexican',
   'steak house': 'Steakhouse', 'steak': 'Steakhouse', 'sushi': 'Japanese',
   'ramen': 'Japanese', 'fusion': 'Asian', 'greek': 'Mediterranean',
+  'burrito': 'Mexican', 'family': 'American', 'buffet': 'American',
+  'wings': 'American', 'juke joint': 'BBQ', 'convenience store': 'American',
 };
 
 function deriveCuisine(details, knownCuisines) {
@@ -317,6 +332,8 @@ async function main() {
       const details = await placeDetails(placeId);
       if (details.businessStatus && details.businessStatus !== 'OPERATIONAL') continue;
       if ((details.userRatingCount || 0) < (CONFIG.minUserRatings ?? 0)) { report.skipped++; continue; }
+      if (!inRegion(details.location?.latitude, details.location?.longitude)) { report.skipped++; continue; }
+      if ((details.types || []).some((t) => BLOCKED_TYPES.includes(t))) { report.skipped++; continue; }
       const r = toRestaurant(details, nextId++, meta.cityFallback, knownCuisines);
       r.featured_image = await resolvePhotoUrl(details);
       restaurants.push(r);
@@ -325,6 +342,34 @@ async function main() {
       await sleep(120);
     } catch (e) {
       report.errors.push(`details ${meta.name}: ${e.message}`);
+    }
+  }
+
+  // ---- 2pre. region & type sweep for previously added entries (no API cost) ----
+  {
+    const archive = fs.existsSync(ARCHIVE_PATH)
+      ? JSON.parse(fs.readFileSync(ARCHIVE_PATH, 'utf8'))
+      : { closed: [] };
+    const keep = [];
+    let swept = 0;
+    for (const r of restaurants) {
+      const cat = (r.categories || '').toLowerCase();
+      const bad = r.added_by_refresh && (
+        !inRegion(r.lat, r.lng) ||
+        BLOCKED_CATEGORY_WORDS.some((w) => cat.includes(w))
+      );
+      if (bad) {
+        archive.closed.push({ ...r, archived_on: new Date().toISOString().slice(0, 10), removed_reason: !inRegion(r.lat, r.lng) ? 'out_of_region' : 'non_restaurant' });
+        report.closed.push(`${r.name} — ${r.city} (${!inRegion(r.lat, r.lng) ? 'outside East TN' : 'not a restaurant'})`);
+        swept++;
+      } else {
+        keep.push(r);
+      }
+    }
+    if (swept) {
+      restaurants.length = 0;
+      restaurants.push(...keep);
+      fs.writeFileSync(ARCHIVE_PATH, JSON.stringify(archive, null, 2));
     }
   }
 
