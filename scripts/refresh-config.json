@@ -30,7 +30,33 @@
     "Hartford, TN",
     "Wears Valley, TN",
     "Johnson City, TN",
-    "Bristol, TN"
+    "Bristol, TN",
+    "Rogersville, TN",
+    "Church Hill, TN",
+    "Mount Carmel, TN",
+    "Surgoinsville, TN",
+    "Bulls Gap, TN",
+    "Chattanooga, TN",
+    "East Ridge, TN",
+    "Red Bank, TN",
+    "Soddy-Daisy, TN",
+    "Collegedale, TN",
+    "Signal Mountain, TN",
+    "Lookout Mountain, TN",
+    "Ooltewah, TN",
+    "Hixson, TN",
+    "Kingsport, TN",
+    "Clinton, TN",
+    "Oak Ridge, TN",
+    "Jacksboro, TN",
+    "LaFollette, TN",
+    "Oneida, TN",
+    "Lenoir City, TN",
+    "Loudon, TN",
+    "Sweetwater, TN",
+    "Madisonville, TN",
+    "Vonore, TN",
+    "Tellico Plains, TN"
   ],
 
   "extraQueries": {
@@ -43,6 +69,20 @@
     "Johnson City, TN": [
       "Mexican restaurants in Johnson City TN",
       "BBQ restaurants in Johnson City TN"
+    ],
+      "Chattanooga, TN": [
+      "BBQ restaurants in Chattanooga TN",
+      "Mexican restaurants in Chattanooga TN",
+      "pizza restaurants in Chattanooga TN",
+      "breakfast restaurants in Chattanooga TN",
+      "seafood restaurants in Chattanooga TN"
+    ],
+    "Rogersville, TN": [
+      "restaurants in Hawkins County TN"
+    ],
+      "Oak Ridge, TN": [
+      "Mexican restaurants in Oak Ridge TN",
+      "pizza restaurants in Oak Ridge TN"
     ]
   },
 
