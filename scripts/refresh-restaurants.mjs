@@ -400,7 +400,7 @@ async function main() {
   }
 
   // ---- 3. closure sweep over existing listings ----
-  if (CONFIG.checkClosures && !MOCK) {
+  if (CONFIG.checkClosures && !MOCK && !onlyCity) {
     const archive = fs.existsSync(ARCHIVE_PATH)
       ? JSON.parse(fs.readFileSync(ARCHIVE_PATH, 'utf8'))
       : { closed: [] };
