@@ -1,6 +1,5 @@
 {
   "_HOW_TO_USE": "To cover a new city: add it to the 'cities' list below (format: 'City, TN'), commit this file, then go to the Actions tab -> 'Refresh Restaurants' -> 'Run workflow'. That's the entire process. The monthly scheduled run will include it automatically from then on. For large cities, add extra searches under 'extraQueries' to get past Google's 60-results-per-search cap.",
-
   "cities": [
     "Knoxville, TN",
     "Morristown, TN",
@@ -60,7 +59,6 @@
     "Cleveland, TN",
     "Greeneville, TN"
   ],
-
   "extraQueries": {
     "Knoxville, TN": [
       "BBQ restaurants in Knoxville TN",
@@ -68,11 +66,27 @@
       "pizza restaurants in Knoxville TN",
       "breakfast restaurants in Knoxville TN"
     ],
+    "Sevierville, TN": [
+      "BBQ restaurants in Sevierville TN",
+      "breakfast restaurants in Sevierville TN",
+      "seafood restaurants in Sevierville TN",
+      "pizza restaurants in Sevierville TN"
+    ],
+    "Pigeon Forge, TN": [
+      "BBQ restaurants in Pigeon Forge TN",
+      "breakfast restaurants in Pigeon Forge TN",
+      "seafood restaurants in Pigeon Forge TN"
+    ],
+    "Gatlinburg, TN": [
+      "BBQ restaurants in Gatlinburg TN",
+      "breakfast restaurants in Gatlinburg TN",
+      "seafood restaurants in Gatlinburg TN"
+    ],
     "Johnson City, TN": [
       "Mexican restaurants in Johnson City TN",
       "BBQ restaurants in Johnson City TN"
     ],
-      "Chattanooga, TN": [
+    "Chattanooga, TN": [
       "BBQ restaurants in Chattanooga TN",
       "Mexican restaurants in Chattanooga TN",
       "pizza restaurants in Chattanooga TN",
@@ -82,15 +96,13 @@
     "Rogersville, TN": [
       "restaurants in Hawkins County TN"
     ],
-      "Oak Ridge, TN": [
+    "Oak Ridge, TN": [
       "Mexican restaurants in Oak Ridge TN",
       "pizza restaurants in Oak Ridge TN"
     ]
   },
-
-  "maxNewPerRun": 60,
-  "maxDetailCallsPerRun": 90,
+  "maxNewPerRun": 300,
+  "maxDetailCallsPerRun": 300,
   "checkClosures": true,
   "minUserRatings": 5
 }
-
