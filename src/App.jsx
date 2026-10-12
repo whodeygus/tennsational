@@ -8,6 +8,7 @@ import CityPage from './components/CityPage.jsx';
 import AboutPage from './components/AboutPage.jsx';
 import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import MerchPage from './components/MerchPage.jsx';
+import StickerMaker from './components/StickerMaker.jsx';
 import './App.css';
 
 // Old links used /#/restaurants — forward anyone arriving on a hash URL
@@ -48,6 +49,7 @@ function App() {
             <Route path="/merch" element={<MerchPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/stickers" element={<StickerMaker />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import {
-  canVote, fetchMyRating, loadRatingSummaries, ratingKey, submitRating,
+  canVote, fetchMyRating, loadApproved, loadRatingSummaries, ratingKey, submitRating,
 } from '../lib/ratings.mjs';
 
 const COLORS = { navy: '#1A3550', orange: '#C8641A', text: '#333333', muted: '#6b7280', cream: '#F7F0E3' };
@@ -121,5 +121,35 @@ export default function LocalRating({ restaurant }) {
         Local ratings come from TENNsational visitors — one per person. Google ratings come from Google.
       </div>
     </div>
+  );
+}
+
+// Set of approved restaurant keys; empty until loaded or if unreachable.
+export function useApproved() {
+  const [approved, setApprovedSet] = useState(() => new Set());
+  useEffect(() => {
+    let live = true;
+    loadApproved().then((s) => { if (live) setApprovedSet(s); });
+    return () => { live = false; };
+  }, []);
+  return approved;
+}
+
+// Small "TENNsational Approved" pill, linking to what it means.
+export function ApprovedBadge({ size = 'sm' }) {
+  const big = size === 'lg';
+  return (
+    <a
+      href="/about#approved"
+      title="Personally visited and recommended by TENNsational"
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap',
+        background: '#2F4A3C', color: '#fff', textDecoration: 'none',
+        padding: big ? '3px 12px' : '2px 9px', borderRadius: '999px',
+        fontSize: big ? '0.8rem' : '0.72rem', fontWeight: 700, letterSpacing: '0.02em',
+      }}
+    >
+      ✓ TENNsational Approved
+    </a>
   );
 }

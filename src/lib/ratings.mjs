@@ -86,3 +86,28 @@ export function loadRatingSummaries() {
   }
   return summariesPromise;
 }
+
+// ---------- "TENNsational Approved" badges (see supabase/approved.sql) ----------
+
+// Set of restaurant keys that carry the badge.
+export async function fetchApproved() {
+  const rows = await rpc('get_approved');
+  return new Set((rows || []).map((x) => (typeof x === 'string' ? x : x.get_approved)));
+}
+
+let approvedPromise = null;
+export function loadApproved({ refresh = false } = {}) {
+  if (!approvedPromise || refresh) {
+    approvedPromise = fetchApproved().catch(() => {
+      approvedPromise = null;
+      return new Set();
+    });
+  }
+  return approvedPromise;
+}
+
+export const checkAdmin = (passcode) => rpc('check_admin', { p_passcode: passcode });
+
+export function setApproved(r, approved, passcode) {
+  return rpc('set_approved', { p_restaurant_key: ratingKey(r), p_approved: approved, p_passcode: passcode });
+}

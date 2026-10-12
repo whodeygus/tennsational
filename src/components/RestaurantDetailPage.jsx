@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useRef } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Star, MapPin, Phone, Globe, Clock, ArrowLeft, ExternalLink } from 'lucide-react';
 import allRestaurantsData from '../data/allRestaurants.json';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
@@ -8,7 +8,7 @@ import {
 } from '../lib/seo.mjs';
 import { blendedScore, ratingKey } from '../lib/ratings.mjs';
 import { isSponsored } from '../lib/featured.mjs';
-import LocalRating, { useRatingSummaries } from './LocalRating';
+import LocalRating, { ApprovedBadge, useApproved, useRatingSummaries } from './LocalRating';
 
 const COLORS = {
   cream: '#F7F0E3',
@@ -61,6 +61,9 @@ export default function RestaurantDetailPage() {
   const { bySlug, slugOf } = useMemo(() => buildSlugMap(restaurants), [restaurants]);
   const restaurant = bySlug.get(slug);
   const summaries = useRatingSummaries();
+  const approved = useApproved();
+  const location = useLocation();
+  const ratingRef = useRef(null);
 
   useEffect(() => {
     if (restaurant) {
@@ -69,9 +72,14 @@ export default function RestaurantDetailPage() {
         restaurantMetaDescription(restaurant),
         `/restaurant/${slug}`,
       );
-      window.scrollTo(0, 0);
+      // Visitors arriving from a sticker QR code land on the rating box.
+      if (new URLSearchParams(location.search).get('ref') === 'sticker' && ratingRef.current) {
+        ratingRef.current.scrollIntoView({ block: 'center' });
+      } else {
+        window.scrollTo(0, 0);
+      }
     }
-  }, [slug, restaurant]);
+  }, [slug, restaurant, location.search]);
 
   if (!restaurant) {
     return (
@@ -138,6 +146,7 @@ export default function RestaurantDetailPage() {
               {r.cuisine}
             </span>
             {r.price_range ? <span style={{ fontWeight: 700 }}>{r.price_range}</span> : null}
+            {approved.has(ratingKey(r)) ? <ApprovedBadge size="lg" /> : null}
             {isSponsored(r) ? (
               <span style={{ background: 'rgba(255,255,255,0.18)', color: '#fff', padding: '3px 10px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.03em' }}>
                 Sponsored
@@ -149,7 +158,7 @@ export default function RestaurantDetailPage() {
 
       {/* Body */}
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 20px 60px' }}>
-        <LocalRating restaurant={r} />
+        <div ref={ratingRef}><LocalRating restaurant={r} /></div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px' }}>
           {/* About */}
           <div style={{ background: '#fff', borderRadius: '12px', padding: '26px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>

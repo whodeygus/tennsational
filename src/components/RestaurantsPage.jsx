@@ -5,6 +5,8 @@ import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import allRestaurantsData from '../data/allRestaurants.json';
 import { buildSlugMap, citySlug } from '../lib/seo.mjs';
 import { isSponsored } from '../lib/featured.mjs';
+import { ratingKey } from '../lib/ratings.mjs';
+import { ApprovedBadge, useApproved } from './LocalRating';
 import '../App.css';
 
 // Simple star display component
@@ -32,6 +34,7 @@ const StarDisplay = ({ rating, size = "sm" }) => {
 export default function RestaurantsPage() {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
+  const approved = useApproved();
   const [selectedCounty, setSelectedCounty] = useState('All Counties');
   const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
   const [cityFilter, setCityFilter] = useState('');
@@ -195,6 +198,9 @@ useEffect(() => {
           <MapPin className="w-4 h-4 flex-shrink-0" />
           <span className="line-clamp-1">{restaurant.city}, {restaurant.county}</span>
         </div>
+        {approved.has(ratingKey(restaurant)) && (
+          <div style={{ marginBottom: '8px' }}><ApprovedBadge /></div>
+        )}
         
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">

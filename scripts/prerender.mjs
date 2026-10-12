@@ -14,7 +14,9 @@ import {
   restaurantTitle, restaurantMetaDescription, restaurantSchema,
   cityTitle, cityMetaDescription, mapsLink,
 } from '../src/lib/seo.mjs';
-import { blendedScore, fetchRatingSummaries, ratingKey } from '../src/lib/ratings.mjs';
+import {
+  blendedScore, fetchApproved, fetchRatingSummaries, ratingKey,
+} from '../src/lib/ratings.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
@@ -35,6 +37,16 @@ try {
   console.log(`✓ local ratings for ${localRatings.size} restaurants`);
 } catch (e) {
   console.warn(`! local ratings unavailable (${e.message}); building without them`);
+}
+let approvedKeys = new Set();
+try {
+  approvedKeys = await Promise.race([
+    fetchApproved(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timed out')), 10000)),
+  ]);
+  console.log(`✓ ${approvedKeys.size} TENNsational Approved restaurants`);
+} catch (e) {
+  console.warn(`! approved list unavailable (${e.message}); building without badges`);
 }
 
 const template = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
@@ -113,6 +125,7 @@ for (const r of restaurants) {
   const content = `
     <article>
       <h1>${esc(r.name)}</h1>
+      ${approvedKeys.has(ratingKey(r)) ? '<p><a href="/about#approved">✓ TENNsational Approved</a> — personally visited and recommended.</p>' : ''}
       <p><strong>${esc(r.cuisine || 'Restaurant')}</strong> in ${esc(r.city)}, Tennessee${r.county ? ` (${esc(r.county)})` : ''}.
       ${r.rating ? `Rated ${r.rating} stars on Google${r.review_count ? ` (${r.review_count} reviews)` : ''}.` : ''}
       ${local ? `TENNsational locals rate it ${local.avg} from ${local.count} rating${local.count === 1 ? '' : 's'}.` : ''}

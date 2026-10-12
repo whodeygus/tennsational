@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { MapPin, Users, Star, Heart } from 'lucide-react';
 import '../App.css';
 
@@ -15,6 +16,14 @@ const CardContent = ({ children, className = '', ...props }) => (
 );
 
 export default function AboutPage() {
+  // Badge links point at /about#approved; the section renders after load,
+  // so scroll to it once it exists.
+  useEffect(() => {
+    if (window.location.hash === '#approved') {
+      document.getElementById('approved')?.scrollIntoView();
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -79,6 +88,24 @@ export default function AboutPage() {
               We believe that great food brings communities together, and every restaurant has a story worth sharing.
               Whether you&apos;re looking for authentic Southern comfort food, innovative cuisine, or a perfect family
               dining spot, we&apos;re here to help you discover what makes Tennessee dining truly sensational.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8">
+          <CardContent className="p-8">
+            <h2 id="approved" className="text-2xl font-bold text-gray-900 mb-4" style={{ scrollMarginTop: '90px' }}>
+              What does &ldquo;TENNsational Approved&rdquo; mean?
+            </h2>
+            <p className="text-gray-600 text-lg leading-relaxed mb-4">
+              TENNsational Approved restaurants are places we&apos;ve personally eaten at and recommend. It can&apos;t be
+              bought &mdash; look for the sticker on the door or at the register. Paid placements are always labeled
+              &ldquo;Sponsored&rdquo; and are separate from Approved.
+            </p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Where do the ratings come from?</h3>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              Each restaurant shows two ratings. The Google rating comes straight from Google. The TENNsational Locals
+              rating comes from visitors to this site &mdash; one rating per person, per restaurant.
             </p>
           </CardContent>
         </Card>

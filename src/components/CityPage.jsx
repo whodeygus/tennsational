@@ -7,7 +7,7 @@ import {
   buildSlugMap, citySlug, cityTitle, cityMetaDescription, SITE_URL,
 } from '../lib/seo.mjs';
 import { blendedScore, ratingKey } from '../lib/ratings.mjs';
-import { useRatingSummaries } from './LocalRating';
+import { ApprovedBadge, useApproved, useRatingSummaries } from './LocalRating';
 
 const COLORS = {
   cream: '#F7F0E3',
@@ -42,6 +42,7 @@ export default function CityPage() {
   const { slugOf } = useMemo(() => buildSlugMap(restaurants), [restaurants]);
   const [cuisineFilter, setCuisineFilter] = useState('All');
   const summaries = useRatingSummaries();
+  const approved = useApproved();
 
   const cityRestaurants = useMemo(
     () => restaurants.filter((r) => citySlug(r.city) === slug),
@@ -143,6 +144,7 @@ export default function CityPage() {
                 <span style={{ background: COLORS.cream, color: COLORS.forest, padding: '2px 10px', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600 }}>
                   {r.cuisine}
                 </span>
+                {approved.has(ratingKey(r)) ? <ApprovedBadge /> : null}
                 {r.rating ? (
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: COLORS.muted, fontSize: '0.85rem' }}>
                     <Star style={{ width: '14px', height: '14px', fill: '#f59e0b', color: '#f59e0b' }} />
