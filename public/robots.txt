@@ -2,6 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
-Disallow: /stickers
 
 Sitemap: https://www.tennsational.com/sitemap.xml

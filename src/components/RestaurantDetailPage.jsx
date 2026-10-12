@@ -72,8 +72,8 @@ export default function RestaurantDetailPage() {
         restaurantMetaDescription(restaurant),
         `/restaurant/${slug}`,
       );
-      // Visitors arriving from a sticker QR code land on the rating box.
-      if (new URLSearchParams(location.search).get('ref') === 'sticker' && ratingRef.current) {
+      // Links ending in ?rate (social posts, QR codes) land on the rating box.
+      if (new URLSearchParams(location.search).has('rate') && ratingRef.current) {
         ratingRef.current.scrollIntoView({ block: 'center' });
       } else {
         window.scrollTo(0, 0);

@@ -99,8 +99,7 @@ export default function AboutPage() {
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed mb-4">
               TENNsational Approved restaurants are places we&apos;ve personally eaten at and recommend. It can&apos;t be
-              bought &mdash; look for the sticker on the door or at the register. Paid placements are always labeled
-              &ldquo;Sponsored&rdquo; and are separate from Approved.
+              bought. Paid placements are always labeled &ldquo;Sponsored&rdquo; and are separate from Approved.
             </p>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Where do the ratings come from?</h3>
             <p className="text-gray-600 text-lg leading-relaxed">
