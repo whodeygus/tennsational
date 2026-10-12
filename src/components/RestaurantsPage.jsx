@@ -7,6 +7,7 @@ import { buildSlugMap, citySlug } from '../lib/seo.mjs';
 import { isSponsored } from '../lib/featured.mjs';
 import { ratingKey } from '../lib/ratings.mjs';
 import { ApprovedBadge, useApproved } from './LocalRating';
+import { cachedLocation, distanceMiles, formatMiles, getBrowserLocation } from '../lib/location.mjs';
 import '../App.css';
 
 // Simple star display component
@@ -38,6 +39,23 @@ export default function RestaurantsPage() {
   const [selectedCounty, setSelectedCounty] = useState('All Counties');
   const [selectedCuisine, setSelectedCuisine] = useState('All Cuisines');
   const [cityFilter, setCityFilter] = useState('');
+  const [userLoc, setUserLoc] = useState(() => cachedLocation());
+  const [nearMe, setNearMe] = useState(false);
+  const [locStatus, setLocStatus] = useState(''); // '', 'locating', or an error message
+
+  // "Near me" — asks the browser for location only when the visitor taps
+  // the button (or arrives on /restaurants?near=1 from a link).
+  async function enableNearMe() {
+    setLocStatus('locating');
+    try {
+      setUserLoc(await getBrowserLocation());
+      setNearMe(true);
+      setLocStatus('');
+    } catch (e) {
+      setNearMe(false);
+      setLocStatus(e.message);
+    }
+  }
   
   // State for combined restaurant data
   const [restaurants, setRestaurants] = useState([]);
@@ -139,8 +157,15 @@ return matchesSearch && matchesCounty && matchesCuisine && matchesCity;
   }, [filteredRestaurants]);
 
   const regularRestaurants = useMemo(() => {
-    return filteredRestaurants.filter((restaurant) => !isSponsored(restaurant));
-  }, [filteredRestaurants]);
+    const regular = filteredRestaurants.filter((restaurant) => !isSponsored(restaurant));
+    if (!nearMe || !userLoc) return regular;
+    const dist = (r) => distanceMiles(userLoc, r) ?? Infinity;
+    return [...regular].sort((a, b) => dist(a) - dist(b));
+  }, [filteredRestaurants, nearMe, userLoc]);
+
+  useEffect(() => {
+    if (new URLSearchParams(location.search).get('near') === '1') enableNearMe();
+  }, [location.search]);
 
   // Read search/city/category filter passed from HomePage links
 useEffect(() => {
@@ -196,7 +221,10 @@ useEffect(() => {
         
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
           <MapPin className="w-4 h-4 flex-shrink-0" />
-          <span className="line-clamp-1">{restaurant.city}, {restaurant.county}</span>
+          <span className="line-clamp-1">
+            {userLoc && distanceMiles(userLoc, restaurant) != null ? `${formatMiles(distanceMiles(userLoc, restaurant))} · ` : ''}
+            {restaurant.city}, {restaurant.county}
+          </span>
         </div>
         {approved.has(ratingKey(restaurant)) && (
           <div style={{ marginBottom: '8px' }}><ApprovedBadge /></div>
@@ -400,8 +428,26 @@ useEffect(() => {
             </div>
           </div>
           
-          <div className="text-sm text-gray-600">
-            Showing {filteredRestaurants.length} restaurants
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px' }}>
+            <button
+              type="button"
+              onClick={() => (nearMe ? setNearMe(false) : enableNearMe())}
+              disabled={locStatus === 'locating'}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer',
+                padding: '8px 16px', borderRadius: '999px', fontWeight: 600, fontSize: '0.9rem',
+                border: '2px solid #C8641A',
+                background: nearMe ? '#C8641A' : '#fff', color: nearMe ? '#fff' : '#C8641A',
+              }}
+            >
+              📍 {locStatus === 'locating' ? 'Finding you…' : nearMe ? 'Near me ✓' : 'Near me'}
+            </button>
+            <span className="text-sm text-gray-600">
+              Showing {filteredRestaurants.length} restaurants{nearMe ? ', closest first' : ''}
+            </span>
+            {locStatus && locStatus !== 'locating' && (
+              <span style={{ fontSize: '0.85rem', color: '#b91c1c' }}>{locStatus}</span>
+            )}
           </div>
 
           {cityLinks.length > 0 && (

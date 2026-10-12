@@ -285,6 +285,13 @@ export default function HomePage() {
 
         {/* Quick-filter tags */}
         <div style={{ position:'relative', zIndex:2, display:'flex', flexWrap:'wrap', gap:'0.5rem', justifyContent:'center' }}>
+          <button onClick={() => navigate('/restaurants?near=1')}
+            style={{ background:C.orange, border:`1px solid ${C.orange}`,
+              color:'white', padding:'0.35rem 1rem',
+              borderRadius:'50px', fontSize:'0.78rem', fontWeight:700, cursor:'pointer',
+              fontFamily:'inherit' }}>
+            📍 Near me
+          </button>
           {['🔥 BBQ','🌮 Mexican','🍕 Pizza','🍝 Italian','🥩 Steakhouse','🍗 Southern','🍔 Burgers'].map(tag => (
             <button key={tag} onClick={() => handleTagClick(tag)}
               style={{ background:'rgba(255,255,255,0.07)', border:`1px solid rgba(200,100,26,0.3)`,

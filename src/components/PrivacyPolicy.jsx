@@ -84,6 +84,27 @@ export default function PrivacyPolicy() {
                   </li>
                 </ul>
               </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">d. Location (&ldquo;Near me&rdquo;):</h3>
+                <p className="text-gray-700">
+                  If you tap &ldquo;Near me&rdquo; on our website, or allow location in the TENNsational app, your device
+                  shares its approximate location so we can show the closest restaurants and their distance from you.
+                  Your location is used only on your device to sort and measure distances &mdash; it is never sent to
+                  us, stored, or shared. The app only reads your location while it is open. You can turn location off
+                  at any time in your browser or phone settings.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">e. Restaurant Ratings:</h3>
+                <p className="text-gray-700">
+                  When you rate a restaurant, we store your star rating with a random identifier for your browser or
+                  app install (so you can change your rating, and so each person rates once) and a one-way scrambled
+                  version of your network address used only to prevent spam. We never store your name or your actual
+                  IP address with a rating.
+                </p>
+              </div>
             </div>
           </section>
 

@@ -8,6 +8,7 @@ import {
 } from '../lib/seo.mjs';
 import { blendedScore, ratingKey } from '../lib/ratings.mjs';
 import { isSponsored } from '../lib/featured.mjs';
+import { cachedLocation, distanceMiles, formatMiles } from '../lib/location.mjs';
 import LocalRating, { ApprovedBadge, useApproved, useRatingSummaries } from './LocalRating';
 
 const COLORS = {
@@ -189,6 +190,9 @@ export default function RestaurantDetailPage() {
                 <a href={mapsLink(r)} target="_blank" rel="noopener noreferrer" style={{ color: COLORS.text, textDecoration: 'none' }}>
                   {r.address} <ExternalLink style={{ width: '13px', height: '13px', display: 'inline', color: COLORS.muted }} />
                 </a>
+                {distanceMiles(cachedLocation(), r) != null && (
+                  <span style={{ color: COLORS.muted, whiteSpace: 'nowrap' }}>· {formatMiles(distanceMiles(cachedLocation(), r))} away</span>
+                )}
               </div>
             )}
             {r.phone && (
