@@ -39,9 +39,15 @@ export function buildSlugMap(restaurants) {
   return { bySlug, slugOf };
 }
 
-// Trimmed, clean meta description for a restaurant page.
+// Trimmed, clean meta description for a restaurant page. Leads with the
+// facts searchers compare in results (rating, price, cuisine, city) so the
+// snippet earns the click, then the restaurant's own description.
 export function restaurantMetaDescription(r) {
-  const lead = `${r.name} — ${r.cuisine || 'restaurant'} in ${r.city || 'East Tennessee'}, TN.`;
+  const rating = r.rating
+    ? `★ ${r.rating}${r.review_count ? ` (${Number(r.review_count).toLocaleString('en-US')} reviews)` : ''}`
+    : '';
+  const kind = [r.price_range, r.cuisine || 'restaurant'].filter(Boolean).join(' ');
+  const lead = `${r.name}: ${[rating, `${kind} in ${r.city || 'East Tennessee'}, TN`].filter(Boolean).join(' · ')}. Hours, phone & directions.`;
   const extra = (r.description || '').replace(/\s+/g, ' ').trim();
   const combined = extra ? `${lead} ${extra}` : lead;
   return combined.length > 158 ? combined.slice(0, 155).trimEnd() + '…' : combined;
