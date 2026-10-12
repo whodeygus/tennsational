@@ -130,5 +130,12 @@
   "maxNewPerRun": 300,
   "maxDetailCallsPerRun": 300,
   "checkClosures": true,
-  "minUserRatings": 5
+  "minUserRatings": 5,
+  "excludePlaces": [
+    {
+      "place_id": "ChIJyw_IQ_7-W4gRd5WLT06XmeI",
+      "name": "Private Dinner Chef — Pigeon Forge",
+      "reason": "Private chef service, not a restaurant"
+    }
+  ]
 }

@@ -157,6 +157,7 @@ const NAME_CUISINE = {
   'ramen': 'Japanese', 'fusion': 'Asian', 'greek': 'Mediterranean',
   'burrito': 'Mexican', 'family': 'American', 'buffet': 'American',
   'wings': 'American', 'juke joint': 'BBQ', 'convenience store': 'American',
+  'pizza delivery': 'Pizza',
 };
 
 function deriveCuisine(details, knownCuisines) {
@@ -263,6 +264,8 @@ async function main() {
   const knownIds = new Set(restaurants.map((r) => r.place_id).filter(Boolean));
   const knownNameCity = new Set(restaurants.map((r) => norm(r.name) + '|' + norm(r.city)));
   const knownCuisines = data.cuisines || [];
+  // Places removed by hand that should never be re-added (refresh-config.json)
+  const excludedIds = new Set((CONFIG.excludePlaces || []).map((e) => e.place_id));
 
   const report = { added: [], closed: [], skipped: 0, errors: [] };
 
@@ -288,7 +291,7 @@ async function main() {
           const res = await placesSearchText(q, pageToken);
           for (const p of res.places || []) {
             if (p.businessStatus && p.businessStatus !== 'OPERATIONAL') continue;
-            if (knownIds.has(p.id)) continue;
+            if (knownIds.has(p.id) || excludedIds.has(p.id)) continue;
             const nameCity = norm(p.displayName?.text) + '|' + norm(city.split(',')[0]);
             if (knownNameCity.has(nameCity)) { report.skipped++; continue; }
             if (!discovered.has(p.id)) discovered.set(p.id, { name: p.displayName?.text, cityFallback: city.split(',')[0] });
