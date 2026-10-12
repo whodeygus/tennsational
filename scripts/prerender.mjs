@@ -14,7 +14,7 @@ import {
   restaurantTitle, restaurantMetaDescription, restaurantSchema,
   cityTitle, cityMetaDescription, mapsLink,
 } from '../src/lib/seo.mjs';
-import { fetchRatingSummaries, ratingKey } from '../src/lib/ratings.mjs';
+import { blendedScore, fetchRatingSummaries, ratingKey } from '../src/lib/ratings.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
@@ -91,7 +91,9 @@ for (const r of restaurants) {
   if (!byCity.has(r.city)) byCity.set(r.city, []);
   byCity.get(r.city).push(r);
 }
-for (const list of byCity.values()) list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+const score = (r) => blendedScore(r, localRatings.get(ratingKey(r)));
+const byScore = (a, b) => score(b) - score(a);
+for (const list of byCity.values()) list.sort(byScore);
 
 const linkList = (list) => list
   .map((x) => `<li><a href="/restaurant/${slugOf.get(x.id)}">${esc(x.name)}</a> — ${esc(x.cuisine || '')}${x.rating ? `, ★ ${x.rating}` : ''}</li>`)
@@ -157,7 +159,7 @@ for (const [slug, list] of cities) {
   const topCuisines = Object.entries(cuisineCounts).sort((a, b) => b[1] - a[1]).map(([c]) => c);
 
   const items = [...list]
-    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+    .sort(byScore)
     .map((r) => `<li><a href="/restaurant/${slugOf.get(r.id)}">${esc(r.name)}</a> — ${esc(r.cuisine || '')}${r.rating ? `, ★ ${r.rating}` : ''}</li>`)
     .join('\n');
 

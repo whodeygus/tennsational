@@ -6,10 +6,16 @@
 export const SUPABASE_URL = 'https://ypsxwpmoobxzdmplzrle.supabase.co';
 export const SUPABASE_KEY = 'sb_publishable_-neiLSc0x4TLWPRGPo-kfQ_x5mAZNpG';
 
-// Google's rating counts as this many votes when blending with local ratings
-// for sort order, so a few early ratings nudge a restaurant instead of
-// swinging it. (Never displayed — the page shows both ratings separately.)
-const GOOGLE_PRIOR_VOTES = 20;
+// Sort-score tuning (never displayed — pages show Google and local ratings
+// separately). Every restaurant starts from a typical regional rating worth
+// PRIOR_VOTES votes; Google's rating adds one vote per GOOGLE_REVIEWS_PER_VOTE
+// reviews, up to GOOGLE_MAX_VOTES; each local rating is one vote. So a 5.0
+// from 12 reviews no longer outranks a 4.9 from 585, and a few local ratings
+// nudge a well-reviewed restaurant instead of swinging it.
+const TYPICAL_RATING = 4.3;
+const PRIOR_VOTES = 5;
+const GOOGLE_REVIEWS_PER_VOTE = 10;
+const GOOGLE_MAX_VOTES = 30;
 
 // Stable key for a restaurant across monthly refreshes.
 export const ratingKey = (r) => r.place_id || `id-${r.id}`;
@@ -31,13 +37,11 @@ export async function fetchRatingSummaries() {
   return new Map((rows || []).map((x) => [x.restaurant_key, { avg: Number(x.avg), count: Number(x.count) }]));
 }
 
-// Sort score: Google's rating weighted as up to GOOGLE_PRIOR_VOTES votes,
-// blended with local ratings.
+// Sort score blending the typical rating, Google's rating and local ratings.
 export function blendedScore(r, local) {
-  const gWeight = r.rating ? Math.min(r.review_count || 0, GOOGLE_PRIOR_VOTES) : 0;
+  const g = r.rating ? Math.min((r.review_count || 0) / GOOGLE_REVIEWS_PER_VOTE, GOOGLE_MAX_VOTES) : 0;
   const n = local?.count || 0;
-  if (!gWeight && !n) return r.rating || 0;
-  return ((r.rating || 0) * gWeight + (local?.avg || 0) * n) / (gWeight + n);
+  return (TYPICAL_RATING * PRIOR_VOTES + (r.rating || 0) * g + (local?.avg || 0) * n) / (PRIOR_VOTES + g + n);
 }
 
 // ---------- browser-only helpers ----------
