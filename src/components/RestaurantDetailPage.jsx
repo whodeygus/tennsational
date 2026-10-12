@@ -7,6 +7,7 @@ import {
   buildSlugMap, citySlug, restaurantTitle, restaurantMetaDescription, mapsLink, SITE_URL,
 } from '../lib/seo.mjs';
 import { blendedScore, ratingKey } from '../lib/ratings.mjs';
+import { isSponsored } from '../lib/featured.mjs';
 import LocalRating, { useRatingSummaries } from './LocalRating';
 
 const COLORS = {
@@ -137,6 +138,11 @@ export default function RestaurantDetailPage() {
               {r.cuisine}
             </span>
             {r.price_range ? <span style={{ fontWeight: 700 }}>{r.price_range}</span> : null}
+            {isSponsored(r) ? (
+              <span style={{ background: 'rgba(255,255,255,0.18)', color: '#fff', padding: '3px 10px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.03em' }}>
+                Sponsored
+              </span>
+            ) : null}
           </div>
         </div>
       </div>

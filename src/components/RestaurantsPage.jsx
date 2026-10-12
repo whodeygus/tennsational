@@ -4,6 +4,7 @@ import { Star, MapPin, Phone, Globe, Clock, DollarSign } from 'lucide-react';
 import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import allRestaurantsData from '../data/allRestaurants.json';
 import { buildSlugMap, citySlug } from '../lib/seo.mjs';
+import { isSponsored } from '../lib/featured.mjs';
 import '../App.css';
 
 // Simple star display component
@@ -131,11 +132,11 @@ return matchesSearch && matchesCounty && matchesCuisine && matchesCity;
   }, [restaurants, searchTerm, selectedCounty, selectedCuisine]);
 
   const featuredRestaurants = useMemo(() => {
-    return filteredRestaurants.filter(restaurant => restaurant.featured);
+    return filteredRestaurants.filter((restaurant) => isSponsored(restaurant));
   }, [filteredRestaurants]);
 
   const regularRestaurants = useMemo(() => {
-    return filteredRestaurants.filter(restaurant => !restaurant.featured);
+    return filteredRestaurants.filter((restaurant) => !isSponsored(restaurant));
   }, [filteredRestaurants]);
 
   // Read search/city/category filter passed from HomePage links
@@ -175,6 +176,14 @@ useEffect(() => {
               {restaurant.name}
             </Link>
           </h3>
+          {isSponsored(restaurant) && (
+            <span
+              className="text-xs font-medium px-2 py-1 rounded-full ml-2 flex-shrink-0"
+              style={{ background: '#FDF0E1', color: '#9A4A0F', padding: '2px 10px', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
+            >
+              Sponsored
+            </span>
+          )}
           {restaurant.isUserSubmitted && (
             <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full ml-2 flex-shrink-0">
               New!
