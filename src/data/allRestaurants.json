@@ -50388,7 +50388,7 @@
       "categories": "Barbecue restaurant",
       "google_link": "https://maps.google.com/?cid=12838520952780844887&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA",
       "featured_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLdSwXOwII5XMJOE-1KiDEXMXusfCarbNfDI_T4wcL1U_PPRlze2UMnx_ZY9y2SZ86Ygh0OkJtcdsinbP8WNP3EEj4VFSeGBrERP3O7ZgL8oFLdgu21LZJmalbjf2ukTGR9PIJYOVRL9jrSu=s4800-w1024",
-      "featured": false,
+      "featured": true,
       "lat": 35.7115527,
       "lng": -83.51800999999999,
       "place_id": "ChIJ9_JQ19RVWYgRV2_p_8iWK7I",
