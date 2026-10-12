@@ -202,7 +202,7 @@ useEffect(() => {
         <div className="flex items-center gap-2 mb-3">
           <StarDisplay rating={restaurant.rating} size="sm" />
           <span className="text-sm text-gray-600">
-            {restaurant.rating} ({restaurant.review_count} reviews)
+            {restaurant.rating} on Google ({restaurant.review_count} reviews)
           </span>
         </div>
         

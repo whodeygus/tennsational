@@ -44,7 +44,7 @@ export function buildSlugMap(restaurants) {
 // snippet earns the click, then the restaurant's own description.
 export function restaurantMetaDescription(r) {
   const rating = r.rating
-    ? `★ ${r.rating}${r.review_count ? ` (${Number(r.review_count).toLocaleString('en-US')} reviews)` : ''}`
+    ? `★ ${r.rating} on Google${r.review_count ? ` (${Number(r.review_count).toLocaleString('en-US')})` : ''}`
     : '';
   const kind = [r.price_range, r.cuisine || 'restaurant'].filter(Boolean).join(' ');
   const lead = `${r.name}: ${[rating, `${kind} in ${r.city || 'East Tennessee'}, TN`].filter(Boolean).join(' · ')}. Hours, phone & directions.`;
@@ -79,8 +79,14 @@ export function mapsLink(r) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((r.name || '') + ' ' + (r.address || ''))}`;
 }
 
-// schema.org Restaurant structured data for one restaurant.
-export function restaurantSchema(r, url) {
+// Minimum local ratings before they're published as structured data, so one
+// early vote can't put a 1-star snippet in Google results.
+export const MIN_LOCAL_RATINGS_FOR_SCHEMA = 5;
+
+// schema.org Restaurant structured data for one restaurant. aggregateRating
+// uses only TENNsational's own visitor ratings (`local` = { avg, count }):
+// Google's guidelines don't allow marking up ratings taken from other sites.
+export function restaurantSchema(r, url, local) {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
@@ -104,11 +110,13 @@ export function restaurantSchema(r, url) {
   if (r.lat && r.lng) {
     schema.geo = { '@type': 'GeoCoordinates', latitude: r.lat, longitude: r.lng };
   }
-  if (r.rating && r.review_count) {
+  if (local && local.count >= MIN_LOCAL_RATINGS_FOR_SCHEMA) {
     schema.aggregateRating = {
       '@type': 'AggregateRating',
-      ratingValue: r.rating,
-      reviewCount: r.review_count,
+      ratingValue: local.avg,
+      ratingCount: local.count,
+      bestRating: 5,
+      worstRating: 1,
     };
   }
   // strip undefined keys so the JSON stays clean

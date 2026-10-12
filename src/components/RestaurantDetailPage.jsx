@@ -6,6 +6,8 @@ import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import {
   buildSlugMap, citySlug, restaurantTitle, restaurantMetaDescription, mapsLink, SITE_URL,
 } from '../lib/seo.mjs';
+import { blendedScore, ratingKey } from '../lib/ratings.mjs';
+import LocalRating, { useRatingSummaries } from './LocalRating';
 
 const COLORS = {
   cream: '#F7F0E3',
@@ -57,6 +59,7 @@ export default function RestaurantDetailPage() {
   const restaurants = allRestaurantsData.restaurants;
   const { bySlug, slugOf } = useMemo(() => buildSlugMap(restaurants), [restaurants]);
   const restaurant = bySlug.get(slug);
+  const summaries = useRatingSummaries();
 
   useEffect(() => {
     if (restaurant) {
@@ -87,7 +90,7 @@ export default function RestaurantDetailPage() {
   const cityPath = `/city/${citySlug(r.city)}`;
   const sameCity = restaurants
     .filter((x) => x.city === r.city && x.id !== r.id)
-    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+    .sort((a, b) => blendedScore(b, summaries.get(ratingKey(b))) - blendedScore(a, summaries.get(ratingKey(a))))
     .slice(0, 6);
   const websiteHref = r.website
     ? (r.website.startsWith('http') ? r.website : `https://${r.website}`)
@@ -125,7 +128,9 @@ export default function RestaurantDetailPage() {
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                 <StarRow rating={r.rating} />
                 <strong>{r.rating}</strong>
-                {r.review_count ? <span style={{ opacity: 0.8 }}>({r.review_count.toLocaleString()} reviews)</span> : null}
+                <span style={{ opacity: 0.8 }}>
+                  on Google{r.review_count ? ` (${r.review_count.toLocaleString()} reviews)` : ''}
+                </span>
               </span>
             ) : null}
             <span style={{ background: COLORS.orange, color: '#fff', padding: '3px 10px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 600 }}>
@@ -138,6 +143,7 @@ export default function RestaurantDetailPage() {
 
       {/* Body */}
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 20px 60px' }}>
+        <LocalRating restaurant={r} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px' }}>
           {/* About */}
           <div style={{ background: '#fff', borderRadius: '12px', padding: '26px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>

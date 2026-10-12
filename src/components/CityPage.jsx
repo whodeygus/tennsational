@@ -6,6 +6,8 @@ import mountainBackground from '../assets/east_tennessee_mountains.jpg';
 import {
   buildSlugMap, citySlug, cityTitle, cityMetaDescription, SITE_URL,
 } from '../lib/seo.mjs';
+import { blendedScore, ratingKey } from '../lib/ratings.mjs';
+import { useRatingSummaries } from './LocalRating';
 
 const COLORS = {
   cream: '#F7F0E3',
@@ -39,6 +41,7 @@ export default function CityPage() {
   const restaurants = allRestaurantsData.restaurants;
   const { slugOf } = useMemo(() => buildSlugMap(restaurants), [restaurants]);
   const [cuisineFilter, setCuisineFilter] = useState('All');
+  const summaries = useRatingSummaries();
 
   const cityRestaurants = useMemo(
     () => restaurants.filter((r) => citySlug(r.city) === slug),
@@ -80,7 +83,7 @@ export default function CityPage() {
   const shown = cuisineFilter === 'All'
     ? cityRestaurants
     : cityRestaurants.filter((r) => r.cuisine === cuisineFilter);
-  const sorted = [...shown].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  const sorted = [...shown].sort((a, b) => blendedScore(b, summaries.get(ratingKey(b))) - blendedScore(a, summaries.get(ratingKey(a))));
 
   const chip = (active) => ({
     padding: '6px 14px', borderRadius: '999px', cursor: 'pointer', fontSize: '0.85rem',
@@ -143,7 +146,7 @@ export default function CityPage() {
                 {r.rating ? (
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: COLORS.muted, fontSize: '0.85rem' }}>
                     <Star style={{ width: '14px', height: '14px', fill: '#f59e0b', color: '#f59e0b' }} />
-                    {r.rating}{r.review_count ? ` (${r.review_count.toLocaleString()})` : ''}
+                    {r.rating} on Google{r.review_count ? ` (${r.review_count.toLocaleString()})` : ''}
                   </span>
                 ) : null}
               </div>

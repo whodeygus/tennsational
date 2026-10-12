@@ -14,6 +14,7 @@ import {
   restaurantTitle, restaurantMetaDescription, restaurantSchema,
   cityTitle, cityMetaDescription, mapsLink,
 } from '../src/lib/seo.mjs';
+import { fetchRatingSummaries, ratingKey } from '../src/lib/ratings.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
@@ -22,6 +23,19 @@ const DIST = path.join(ROOT, 'dist');
 const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/allRestaurants.json'), 'utf8'));
 const restaurants = data.restaurants;
 const { slugOf } = buildSlugMap(restaurants);
+
+// Local visitor ratings from Supabase. If it's unreachable the build still
+// succeeds; pages just go out without local ratings until the next build.
+let localRatings = new Map();
+try {
+  localRatings = await Promise.race([
+    fetchRatingSummaries(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timed out')), 10000)),
+  ]);
+  console.log(`✓ local ratings for ${localRatings.size} restaurants`);
+} catch (e) {
+  console.warn(`! local ratings unavailable (${e.message}); building without them`);
+}
 
 const template = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
 
@@ -89,6 +103,7 @@ for (const r of restaurants) {
   const route = `restaurant/${slug}`;
   const url = `${SITE_URL}/${route}`;
   const desc = (r.description || '').replace(/\s+/g, ' ').trim();
+  const local = localRatings.get(ratingKey(r));
   const neighbors = (byCity.get(r.city) || []).filter((x) => x.id !== r.id);
   const sameCuisine = r.cuisine ? neighbors.filter((x) => x.cuisine === r.cuisine).slice(0, 6) : [];
   const sameCity = neighbors.filter((x) => !sameCuisine.includes(x)).slice(0, 6);
@@ -97,7 +112,8 @@ for (const r of restaurants) {
     <article>
       <h1>${esc(r.name)}</h1>
       <p><strong>${esc(r.cuisine || 'Restaurant')}</strong> in ${esc(r.city)}, Tennessee${r.county ? ` (${esc(r.county)})` : ''}.
-      ${r.rating ? `Rated ${r.rating} stars${r.review_count ? ` from ${r.review_count} reviews` : ''}.` : ''}
+      ${r.rating ? `Rated ${r.rating} stars on Google${r.review_count ? ` (${r.review_count} reviews)` : ''}.` : ''}
+      ${local ? `TENNsational locals rate it ${local.avg} from ${local.count} rating${local.count === 1 ? '' : 's'}.` : ''}
       ${r.price_range ? `Price range: ${esc(r.price_range)}.` : ''}</p>
       ${desc ? `<p>${esc(desc)}</p>` : ''}
       ${r.address ? `<p>Address: <a href="${esc(mapsLink(r))}">${esc(r.address)}</a></p>` : ''}
@@ -114,7 +130,7 @@ for (const r of restaurants) {
       description: restaurantMetaDescription(r),
       url,
       image: r.featured_image || null,
-      schema: restaurantSchema(r, url),
+      schema: restaurantSchema(r, url, local),
     }),
     content,
   );
