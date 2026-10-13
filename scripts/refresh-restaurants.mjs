@@ -161,6 +161,9 @@ const NAME_CUISINE = {
 };
 
 function deriveCuisine(details, knownCuisines) {
+  // Layer 0: name keywords Google's types miss (pupuserias come back as a
+  // generic "Restaurant", which would otherwise file them under American)
+  if (/pupus/i.test(details.displayName?.text || '')) return 'Latin American';
   // Layer 1: machine types (most reliable)
   for (const t of details.types || []) {
     if (TYPE_CUISINE[t]) return TYPE_CUISINE[t];
