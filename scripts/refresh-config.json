@@ -137,5 +137,7 @@
       "name": "Private Dinner Chef — Pigeon Forge",
       "reason": "Private chef service, not a restaurant"
     }
-  ]
+  ],
+  "hoursBackfillPerRun": 400,
+  "_hoursBackfillPerRun": "Existing listings to re-check for full-week hours each run. Google bills hours at its Enterprise rate: 1,000 free calls/month, shared with new-restaurant lookups (up to maxDetailCallsPerRun=300). 300 + 400 stays under 1,000. Set to 0 once the backfill finishes."
 }

@@ -14,6 +14,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { summarizeHours } from './hours.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
@@ -188,10 +189,9 @@ function extractComponent(components, type) {
 }
 
 function extractHours(details) {
-  const days = details.regularOpeningHours?.weekdayDescriptions;
-  if (!days || !days.length) return '';
-  // "Monday: 11:00 AM – 10:00 PM" -> "11:00 AM – 10:00 PM"
-  return days[0].replace(/^[A-Za-z]+:\s*/, '').replace(/\u2009/g, ' ');
+  // Whole week, e.g. "11 AM-9 PM; Fri-Sat 11 AM-10 PM (Closed Monday)".
+  // (Used to keep Monday only, so Monday-closed places showed "Closed".)
+  return summarizeHours(details.regularOpeningHours?.weekdayDescriptions);
 }
 
 function toRestaurant(details, id, cityFallback, knownCuisines) {
@@ -221,6 +221,7 @@ function toRestaurant(details, id, cityFallback, knownCuisines) {
     lng: details.location?.longitude ?? null,
     place_id: details.id,
     added_by_refresh: new Date().toISOString().slice(0, 10),
+    hours_checked: new Date().toISOString().slice(0, 10),
   };
 }
 
@@ -403,6 +404,30 @@ async function main() {
       } catch { /* try again next run */ }
     }
     if (healed) report.added.push(`(photo backfill: added images to ${healed} existing listings)`);
+  }
+
+  // ---- 2c. hours backfill: full-week hours for listings saved before the
+  // refresh kept the whole week. regularOpeningHours bills at Google's
+  // Place Details Enterprise rate (1,000 free/month, shared with the
+  // new-place lookups above), so it's capped by hoursBackfillPerRun.
+  // Listings wrongly showing "Closed" (or no hours) go first.
+  if (!MOCK) {
+    const today = new Date().toISOString().slice(0, 10);
+    const need = restaurants
+      .filter((r) => r.place_id && r.added_by_refresh && !r.hours_checked)
+      .sort((a, b) => Number(!!a.hours) - Number(!!b.hours))
+      .slice(0, CONFIG.hoursBackfillPerRun ?? 0);
+    let fixed = 0;
+    for (const r of need) {
+      try {
+        const d = await placeDetails(r.place_id, 'id,regularOpeningHours');
+        r.hours = summarizeHours(d.regularOpeningHours?.weekdayDescriptions);
+        r.hours_checked = today;
+        fixed++;
+        await sleep(80);
+      } catch { /* try again next run */ }
+    }
+    if (fixed) report.added.push(`(hours backfill: full-week hours for ${fixed} existing listings)`);
   }
 
   // ---- 3. closure sweep over existing listings ----
